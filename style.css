@@ -1,0 +1,32 @@
+body {
+  margin: 0;
+  background: black;
+  color: white;
+  font-family: Arial;
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  grid-template-rows: 1fr 120px;
+}
+
+#canales {
+  grid-row: 1 / 3;
+  background: #111;
+  padding: 10px;
+}
+
+#player {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+iframe {
+  width: 90%;
+  height: 90%;
+}
+
+#programacion {
+  background: #222;
+  padding: 10px;
+  overflow-x: auto;
+}
