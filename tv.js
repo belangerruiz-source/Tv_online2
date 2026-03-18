@@ -6,7 +6,7 @@ let player;
 let userInteracted = false;
 
 // ===============================
-// 🔹 Cargar YouTube API
+//  Cargar YouTube API
 // ===============================
 function cargarYouTubeAPI() {
   const tag = document.createElement("script");
@@ -14,6 +14,9 @@ function cargarYouTubeAPI() {
   document.body.appendChild(tag);
 }
 
+// ===============================
+//  API lista
+// ===============================
 window.onYouTubeIframeAPIReady = function () {
   player = new YT.Player("video", {
     height: "100%",
@@ -27,14 +30,14 @@ window.onYouTubeIframeAPIReady = function () {
     },
     events: {
       onReady: () => {
-        reproducir();
+        iniciarTV();
       }
     }
   });
 };
 
 // ===============================
-// 🔹 Reproducir tipo TV
+//  Reproducir tipo TV
 // ===============================
 function reproducir() {
   if (!canales.length || !player) return;
@@ -54,6 +57,7 @@ function reproducir() {
     if (tiempo < acumulado + dur) {
       let offset = tiempo - acumulado;
       playVideo(canal.videos[i], offset);
+      mostrarProgramacion();
       return;
     }
 
@@ -62,25 +66,30 @@ function reproducir() {
 }
 
 // ===============================
-// 🔹 Reproducir video
+//  Reproducir video
 // ===============================
 function playVideo(videoId, start) {
   if (!player) return;
 
-  player.loadVideoById({
-    videoId: videoId,
-    startSeconds: Math.floor(start)
-  });
+  try {
+    player.loadVideoById({
+      videoId: videoId,
+      startSeconds: Math.floor(start)
+    });
 
-  if (userInteracted) {
-    player.unMute();
-  } else {
-    player.mute();
+    if (userInteracted) {
+      player.unMute(); //  se activa al tocar canal
+    } else {
+      player.mute(); // inicia en silencio
+    }
+
+  } catch (e) {
+    console.error("Error en reproducci�n:", e);
   }
 }
 
 // ===============================
-// 🔹 Crear lista de canales
+//  Lista de canales
 // ===============================
 function crearListaCanales() {
   const contenedor = document.getElementById("canales");
@@ -89,13 +98,10 @@ function crearListaCanales() {
   canales.forEach((canal, index) => {
     const btn = document.createElement("div");
     btn.textContent = canal.nombre;
-    btn.style.cursor = "pointer";
-    btn.style.padding = "10px";
-    btn.style.color = "white";
 
     btn.onclick = () => {
       canalActual = index;
-      userInteracted = true; // 🔥 QUITA MUTE
+      userInteracted = true; //  quita mute
       reproducir();
     };
 
@@ -104,20 +110,38 @@ function crearListaCanales() {
 }
 
 // ===============================
-// 🔹 Inicializar TV
+//  Mostrar programaci�n
+// ===============================
+function mostrarProgramacion() {
+  const cont = document.getElementById("programacion");
+  const canal = canales[canalActual];
+
+  let html = `<h3 style="color:white;">${canal.nombre}</h3>`;
+
+  canal.videos.forEach((vid, i) => {
+    html += `<div style="color:gray; font-size:12px;">
+      Video ${i + 1} - ${canal.duraciones[i]} seg
+    </div>`;
+  });
+
+  cont.innerHTML = html;
+}
+
+// ===============================
+//  Inicializar TV
 // ===============================
 function iniciarTV() {
   crearListaCanales();
   reproducir();
 
-  // refresca cada cierto tiempo (por si cambia video)
+  //  refresco autom�tico
   setInterval(() => {
     reproducir();
   }, 10000);
 }
 
 // ===============================
-// 🔹 Cargar JSON
+//  Cargar JSON
 // ===============================
 fetch("canales.json")
   .then(response => {
