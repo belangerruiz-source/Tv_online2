@@ -1,228 +1,170 @@
-const EPOCH = 1700000000;
-const API_KEY = "AIzaSyDsCEmTUrXyr7E8RJQqbZt4AV0IN9XQHiI";
+// ===============================
+// CONFIGURACIÓN DE CANALES
+// ===============================
+const canales = [
+  {
+    nombre: "Canal 1",
+    videos: ["dQw4w9WgXcQ", "3JZ_D3ELwOQ"]
+  },
+  {
+    nombre: "Canal 2",
+    videos: ["L_jWHffIx5E", "Zi_XLOBDo_Y"]
+  }
+];
 
-let canales = [];
+// ===============================
+// VARIABLES GLOBALES
+// ===============================
 let canalActual = 0;
-let player;
-let userInteracted = false;
+let player = document.getElementById("video");
 let titulosCache = {};
 
 // ===============================
-//  YouTube API PLAYER
+// OBTENER TÍTULO REAL (SIN API KEY)
 // ===============================
-function cargarYouTubeAPI() {
-  const tag = document.createElement("script");
-  tag.src = "https://www.youtube.com/iframe_api";
-  document.body.appendChild(tag);
-}
-
-window.onYouTubeIframeAPIReady = function () {
-  player = new YT.Player("video", {
-    height: "100%",
-    width: "100%",
-    videoId: "",
-    playerVars: {
-      autoplay: 1,
-      controls: 0
-    },
-    events: {
-      onReady: () => {
-        iniciarTV();
-      }
-    }
-  });
-};
-
-// ===============================
-//  Obtener títulos automáticamente
-// ===============================
-async function obtenerTitulos(videoIds) {
-  const ids = videoIds.join(",");
-
-  const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${ids}&key=${API_KEY}`;
-
+async function obtenerTituloReal(videoId) {
   try {
-    const res = await fetch(url);
+    const res = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${videoId}`);
     const data = await res.json();
-
-    data.items.forEach(item => {
-      titulosCache[item.id] = {
-        titulo: item.snippet.title,
-        thumb: item.snippet.thumbnails.medium.url
-      };
-    });
-
+    return data.title || "Sin título";
   } catch (e) {
-    console.error("Error obteniendo títulos:", e);
+    return "Error cargando";
   }
 }
 
 // ===============================
-//  Reproducir tipo TV
+// CARGAR TÍTULOS (CON CACHE)
 // ===============================
-function reproducir() {
-  if (!canales.length || !player) return;
+async function cargarTitulos() {
+  // cargar cache guardado
+  const guardado = localStorage.getItem("titulosCache");
+  if (guardado) titulosCache = JSON.parse(guardado);
 
-  const canal = canales[canalActual];
-  const total = canal.duraciones.reduce((a, b) => a + b, 0);
+  let ids = [];
+  canales.forEach(c => ids.push(...c.videos));
 
-  const ahora = Math.floor(Date.now() / 1000);
-  const tiempo = (ahora - EPOCH) % total;
-
-  let acumulado = 0;
-
-  for (let i = 0; i < canal.videos.length; i++) {
-    let dur = canal.duraciones[i];
-
-    if (tiempo < acumulado + dur) {
-      let offset = tiempo - acumulado;
-      playVideo(canal.videos[i], offset);
-      mostrarProgramacion();
-      return;
+  for (let id of ids) {
+    if (!titulosCache[id]) {
+      titulosCache[id] = await obtenerTituloReal(id);
     }
-
-    acumulado += dur;
   }
+
+  // guardar cache
+  localStorage.setItem("titulosCache", JSON.stringify(titulosCache));
 }
 
 // ===============================
-//  Play video
+// MINIATURA
 // ===============================
-function playVideo(videoId, start) {
-  player.loadVideoById({
-    videoId: videoId,
-    startSeconds: Math.floor(start)
-  });
-
-  if (userInteracted) player.unMute();
-  else player.mute();
+function getThumbnail(videoId) {
+  return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
 }
 
 // ===============================
-//  Lista de canales con miniaturas
+// CREAR LISTA DE CANALES (MEJOR UI)
 // ===============================
 function crearListaCanales() {
-  const cont = document.getElementById("canales");
-  cont.innerHTML = "";
+  let contenedor = document.getElementById("canales");
+  contenedor.innerHTML = "";
 
   canales.forEach((canal, index) => {
-    const firstVideo = canal.videos[0];
-    const thumb = titulosCache[firstVideo]?.thumb || "";
+    let div = document.createElement("div");
 
-    const div = document.createElement("div");
-    div.innerHTML = `
-      <img src="${thumb}" style="width:100%; border-radius:6px;">
-      <div>${canal.nombre}</div>
-    `;
+    div.style.margin = "12px";
+    div.style.padding = "10px";
+    div.style.borderRadius = "10px";
+    div.style.background = index === canalActual ? "#333" : "#111";
+    div.style.cursor = "pointer";
+    div.style.display = "flex";
+    div.style.alignItems = "center";
+    div.style.gap = "10px";
+
+    let img = document.createElement("img");
+    img.src = getThumbnail(canal.videos[0]);
+    img.style.width = "120px";
+    img.style.borderRadius = "8px";
+
+    let texto = document.createElement("div");
+    texto.innerText = canal.nombre;
+    texto.style.color = "white";
+
+    div.appendChild(img);
+    div.appendChild(texto);
 
     div.onclick = () => {
       canalActual = index;
-      userInteracted = true;
       guardarCanal();
-      reproducir();
+      reproducir(true);
+      crearListaCanales();
     };
+
+    contenedor.appendChild(div);
+  });
+}
+
+// ===============================
+// REPRODUCIR VIDEO
+// ===============================
+function reproducir(quitarMute = false) {
+  let canal = canales[canalActual];
+  let ahora = Math.floor(Date.now() / 1000);
+
+  let duracionTotal = canal.videos.length * 300;
+  let tiempo = ahora % duracionTotal;
+
+  let index = Math.floor(tiempo / 300);
+  let videoId = canal.videos[index];
+
+  let autoplay = 1;
+  let mute = quitarMute ? 0 : 1;
+
+  player.src = `https://www.youtube.com/embed/${videoId}?autoplay=${autoplay}&mute=${mute}`;
+
+  mostrarProgramacion(index);
+}
+
+// ===============================
+// PROGRAMACIÓN CON TÍTULOS REALES
+// ===============================
+function mostrarProgramacion(actualIndex) {
+  let cont = document.getElementById("programacion");
+  cont.innerHTML = "";
+
+  let canal = canales[canalActual];
+
+  canal.videos.forEach((vid, i) => {
+    let div = document.createElement("div");
+
+    let titulo = titulosCache[vid] || "Cargando...";
+
+    div.innerText = `${i === actualIndex ? " " : ""}${titulo}`;
+
+    div.style.color = i === actualIndex ? "yellow" : "white";
+    div.style.margin = "6px";
 
     cont.appendChild(div);
   });
 }
 
 // ===============================
-//  Programación PRO
-// ===============================
-function mostrarProgramacion() {
-  const cont = document.getElementById("programacion");
-  const canal = canales[canalActual];
-
-  let html = `<h3 style="color:white;">${canal.nombre}</h3>`;
-
-  const ahora = Math.floor(Date.now() / 1000);
-  const total = canal.duraciones.reduce((a, b) => a + b, 0);
-  let tiempo = (ahora - EPOCH) % total;
-
-  let acumulado = 0;
-  let hora = new Date();
-
-  for (let i = 0; i < canal.videos.length; i++) {
-    let dur = canal.duraciones[i];
-
-    if (tiempo >= acumulado + dur) {
-      acumulado += dur;
-      continue;
-    }
-
-    let offset = tiempo - acumulado;
-    let inicio = new Date(hora.getTime() - offset * 1000);
-
-    for (let j = i; j < canal.videos.length; j++) {
-      let vid = canal.videos[j];
-      let titulo = titulosCache[vid]?.titulo || "Cargando...";
-      let duracion = canal.duraciones[j];
-
-      let fin = new Date(inicio.getTime() + duracion * 1000);
-
-      html += `
-        <div style="margin-bottom:8px;">
-          <b>${formatearHora(inicio)} - ${formatearHora(fin)}</b><br>
-          <span style="color:gray;">${titulo}</span>
-        </div>
-      `;
-
-      inicio = fin;
-    }
-
-    break;
-  }
-
-  cont.innerHTML = html;
-}
-
-function formatearHora(f) {
-  return f.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-}
-
-// ===============================
-//  Control remoto (teclado)
-// ===============================
-document.addEventListener("keydown", (e) => {
-  if (e.key === "ArrowUp") {
-    canalActual = (canalActual - 1 + canales.length) % canales.length;
-  }
-
-  if (e.key === "ArrowDown") {
-    canalActual = (canalActual + 1) % canales.length;
-  }
-
-  if (e.key === "Enter") {
-    userInteracted = true;
-  }
-
-  guardarCanal();
-  reproducir();
-});
-
-// ===============================
-//  Guardar canal
+// GUARDAR / CARGAR CANAL
 // ===============================
 function guardarCanal() {
   localStorage.setItem("canalActual", canalActual);
 }
 
 function cargarCanalGuardado() {
-  const guardado = localStorage.getItem("canalActual");
+  let guardado = localStorage.getItem("canalActual");
   if (guardado !== null) canalActual = parseInt(guardado);
 }
 
 // ===============================
-//  Inicializar
+// INICIAR TV
 // ===============================
 async function iniciarTV() {
   cargarCanalGuardado();
 
-  // obtener todos los IDs
-  let ids = [];
-  canales.forEach(c => ids.push(...c.videos));
-
-  await obtenerTitulos(ids);
+  await cargarTitulos(); //  títulos reales
 
   crearListaCanales();
   reproducir();
@@ -230,12 +172,4 @@ async function iniciarTV() {
   setInterval(reproducir, 10000);
 }
 
-// ===============================
-//  Cargar JSON
-// ===============================
-fetch("canales.json")
-  .then(res => res.json())
-  .then(data => {
-    canales = data;
-    cargarYouTubeAPI();
-  });
+iniciarTV();
