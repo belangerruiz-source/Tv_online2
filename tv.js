@@ -98,12 +98,8 @@ function crearCanales() {
   canales.forEach((canal, i) => {
     const div = document.createElement("div");
 
+    div.className = "canal" + (i === canalActual ? " activo" : "");
     div.innerText = canal.nombre;
-    div.style.padding = "15px";
-    div.style.margin = "8px";
-    div.style.background = i === canalActual ? "#333" : "#111";
-    div.style.color = "white";
-    div.style.borderRadius = "8px";
 
     div.onclick = () => {
       canalActual = i;
@@ -115,7 +111,6 @@ function crearCanales() {
     cont.appendChild(div);
   });
 }
-
 // ===============================
 // TITULOS REALES
 // ===============================
