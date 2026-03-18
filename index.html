@@ -1,19 +1,82 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>My TV</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>My TV</title>
+
+<style>
+body {
+  margin: 0;
+  background: black;
+  font-family: Arial;
+  color: white;
+  overflow: hidden;
+}
+
+/* layout principal */
+#app {
+  display: flex;
+  height: 100vh;
+}
+
+/* canales izquierda */
+#canales {
+  width: 180px;
+  background: #111;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+/* lado derecho */
+#main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* video grande */
+#video-container {
+  flex: 2;
+}
+
+/* programación visible */
+#programacion {
+  flex: 1;
+  overflow-y: auto;
+  background: #000;
+  padding: 10px;
+}
+
+/* canal */
+.canal {
+  padding: 12px;
+  margin: 6px 0;
+  background: #222;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.canal.activo {
+  background: #444;
+}
+</style>
 </head>
+
 <body>
 
-<div id="canales"></div>
+<div id="app">
 
-<div id="player">
-  <div id="video"></div>
+  <div id="canales"></div>
+
+  <div id="main">
+    <div id="video-container">
+      <div id="video"></div>
+    </div>
+
+    <div id="programacion"></div>
+  </div>
+
 </div>
-
-<div id="programacion"></div>
 
 <script src="tv.js"></script>
 
