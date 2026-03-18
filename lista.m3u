@@ -1,0 +1,7 @@
+#EXTM3U
+#EXTINF:-1 tvg-id="ciudades" tvg-name="CIUDADES" group-title="General",CIUDADES
+https://mytvon.netlify.app/index.html?canal=0
+#EXTINF:-1 tvg-id="historia" tvg-name="HISTORIA" group-title="General",HISTORIA
+https://mytvon.netlify.app/index.html?canal=1
+#EXTINF:-1 tvg-id="universo" tvg-name="UNIVERSO" group-title="General",UNIVERSO
+https://mytvon.netlify.app/index.html?canal=2
