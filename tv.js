@@ -143,27 +143,66 @@ function cargarTitulos() {
 // ===============================
 // PROGRAMACIÓN
 // ===============================
-function mostrarProgramacion(actualIndex) {
+function mostrarProgramacion() {
   const cont = document.getElementById("programacion");
   const canal = canales[canalActual];
 
   let html = `<h3 style="color:white;">${canal.nombre}</h3>`;
 
-  canal.videos.forEach((vid, i) => {
-    let titulo = titulosCache[vid] || "Cargando...";
+  const ahora = Math.floor(Date.now() / 1000);
+  const total = canal.duraciones.reduce((a,b)=>a+b,0);
 
-    html += `
-      <div style="color:${i===actualIndex?"yellow":"white"}; margin:5px;">
-        ${i===actualIndex?" ":""}${titulo}
-      </div>
-    `;
-  });
+  let tiempo = (ahora - EPOCH) % total;
+
+  let acumulado = 0;
+  let inicioReal = new Date();
+
+  // encontrar programa actual
+  for (let i = 0; i < canal.videos.length; i++) {
+    let dur = canal.duraciones[i];
+
+    if (tiempo < acumulado + dur) {
+
+      let offset = tiempo - acumulado;
+
+      // hora de inicio del programa actual
+      let inicio = new Date(inicioReal.getTime() - offset * 1000);
+
+      // mostrar siguientes programas
+      for (let j = i; j < canal.videos.length; j++) {
+
+        let vid = canal.videos[j];
+        let duracion = canal.duraciones[j];
+
+        let fin = new Date(inicio.getTime() + duracion * 1000);
+
+        let titulo = titulosCache[vid] || "Cargando...";
+
+        html += `
+          <div style="margin:8px; color:${j===i?"yellow":"white"};">
+            <b>${formatearHora(inicio)} - ${formatearHora(fin)}</b><br>
+            ${titulo}
+          </div>
+        `;
+
+        inicio = fin;
+      }
+
+      break;
+    }
+
+    acumulado += dur;
+  }
 
   cont.innerHTML = html;
 }
 
-function actualizarProgramacion() {
-  mostrarProgramacion(0);
+// ===============================
+function formatearHora(fecha) {
+  return fecha.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
 }
 
 // ===============================
