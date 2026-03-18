@@ -1,60 +1,73 @@
-// ===============================
-// CONFIG
-// ===============================
-const canales = [
-  {
-    nombre: "CIUDADES",
-    videos: ["ui3n5jDnZo8","1Np-Ea6XCgc","VkIuG4AYTp0"]
-  },
-  {
-    nombre: "HISTORIA",
-    videos: ["aDcKkboqLKw","n1JXIUsGZR8","4dKumyZhw24"]
-  },
-  {
-    nombre: "UNIVERSO",
-    videos: ["Yw7q6xHneN0","nzICDsGjAEA","11hpS7F0YuI"]
-  }
-];
+const EPOCH = 1700000000;
 
-// ===============================
+let canales = [];
 let canalActual = 0;
-let player = document.getElementById("video");
+let player;
+let userInteracted = false;
 let titulosCache = {};
 
 // ===============================
-// TITULOS REALES (SIN API)
+// YOUTUBE API
 // ===============================
-async function obtenerTitulo(videoId) {
-  try {
-    const res = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${videoId}`);
-    const data = await res.json();
-    return data.title || "Sin título";
-  } catch {
-    return "Sin título";
+function cargarYouTubeAPI() {
+  const tag = document.createElement("script");
+  tag.src = "https://www.youtube.com/iframe_api";
+  document.body.appendChild(tag);
+}
+
+window.onYouTubeIframeAPIReady = function () {
+  player = new YT.Player("video", {
+    height: "100%",
+    width: "100%",
+    videoId: "",
+    playerVars: {
+      autoplay: 1,
+      controls: 0
+    },
+    events: {
+      onReady: () => iniciarTV()
+    }
+  });
+};
+
+// ===============================
+// REPRODUCCIÓN TV REAL
+// ===============================
+function reproducir() {
+  if (!canales.length || !player) return;
+
+  const canal = canales[canalActual];
+  const total = canal.duraciones.reduce((a,b)=>a+b,0);
+
+  const ahora = Math.floor(Date.now() / 1000);
+  const tiempo = (ahora - EPOCH) % total;
+
+  let acumulado = 0;
+
+  for (let i = 0; i < canal.videos.length; i++) {
+    let dur = canal.duraciones[i];
+
+    if (tiempo < acumulado + dur) {
+      let offset = tiempo - acumulado;
+
+      player.loadVideoById({
+        videoId: canal.videos[i],
+        startSeconds: Math.floor(offset)
+      });
+
+      if (userInteracted) player.unMute();
+      else player.mute();
+
+      mostrarProgramacion(i);
+      return;
+    }
+
+    acumulado += dur;
   }
 }
 
 // ===============================
-// CARGA DE TITULOS (NO BLOQUEA UI)
-// ===============================
-function cargarTitulos() {
-  canales.forEach(canal => {
-    canal.videos.forEach(async (vid) => {
-      if (!titulosCache[vid]) {
-        titulosCache[vid] = "Cargando...";
-        mostrarProgramacion(); //  pinta mientras carga
-
-        const titulo = await obtenerTitulo(vid);
-        titulosCache[vid] = titulo;
-
-        mostrarProgramacion(); //  actualiza
-      }
-    });
-  });
-}
-
-// ===============================
-// LISTA DE CANALES (SIN IMAGEN)
+// LISTA DE CANALES
 // ===============================
 function crearCanales() {
   const cont = document.getElementById("canales");
@@ -72,7 +85,8 @@ function crearCanales() {
 
     div.onclick = () => {
       canalActual = i;
-      reproducir(true);
+      userInteracted = true;
+      reproducir();
       crearCanales();
     };
 
@@ -81,50 +95,59 @@ function crearCanales() {
 }
 
 // ===============================
-// REPRODUCCIÓN TV
+// TITULOS (NO BLOQUEA)
 // ===============================
-function reproducir(quitarMute = false) {
-  const canal = canales[canalActual];
+function cargarTitulos() {
+  canales.forEach(canal => {
+    canal.videos.forEach(async vid => {
+      if (!titulosCache[vid]) {
+        titulosCache[vid] = "Cargando...";
+        actualizarProgramacion();
 
-  const ahora = Math.floor(Date.now() / 1000);
-  const duracion = canal.videos.length * 300;
+        try {
+          const res = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${vid}`);
+          const data = await res.json();
+          titulosCache[vid] = data.title || "Sin título";
+        } catch {
+          titulosCache[vid] = "Sin título";
+        }
 
-  const index = Math.floor((ahora % duracion) / 300);
-  const videoId = canal.videos[index];
-
-  const mute = quitarMute ? 0 : 1;
-
-  player.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=${mute}`;
-
-  mostrarProgramacion(index);
-}
-
-// ===============================
-// PROGRAMACIÓN (SIEMPRE VISIBLE)
-// ===============================
-function mostrarProgramacion(actual = 0) {
-  const cont = document.getElementById("programacion");
-  cont.innerHTML = "";
-
-  const canal = canales[canalActual];
-
-  canal.videos.forEach((vid, i) => {
-    const div = document.createElement("div");
-
-    const titulo = titulosCache[vid] || "Cargando...";
-
-    div.innerText = `${i === actual ? " " : ""}${titulo}`;
-    div.style.color = i === actual ? "yellow" : "white";
-    div.style.margin = "6px";
-
-    cont.appendChild(div);
+        actualizarProgramacion();
+      }
+    });
   });
 }
 
 // ===============================
-// INICIO
+// PROGRAMACIÓN
 // ===============================
-function iniciar() {
+function mostrarProgramacion(actualIndex) {
+  const cont = document.getElementById("programacion");
+  const canal = canales[canalActual];
+
+  let html = `<h3 style="color:white;">${canal.nombre}</h3>`;
+
+  canal.videos.forEach((vid, i) => {
+    let titulo = titulosCache[vid] || "Cargando...";
+
+    html += `
+      <div style="color:${i===actualIndex?"yellow":"white"}; margin:5px;">
+        ${i===actualIndex?" ":""}${titulo}
+      </div>
+    `;
+  });
+
+  cont.innerHTML = html;
+}
+
+function actualizarProgramacion() {
+  mostrarProgramacion(0);
+}
+
+// ===============================
+// INIT
+// ===============================
+function iniciarTV() {
   crearCanales();
   reproducir();
   cargarTitulos();
@@ -132,4 +155,12 @@ function iniciar() {
   setInterval(reproducir, 10000);
 }
 
-iniciar();
+// ===============================
+// CARGAR JSON
+// ===============================
+fetch("canales.json")
+  .then(res => res.json())
+  .then(data => {
+    canales = data;
+    cargarYouTubeAPI();
+  });
