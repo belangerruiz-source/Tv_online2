@@ -42,11 +42,20 @@ window.onYouTubeIframeAPIReady = function () {
       controls: 1
     },
     events: {
-      onReady: iniciarTV
+  onReady: iniciarTV,
+  onStateChange: onPlayerStateChange
     }
   });
 };
+function onPlayerStateChange(event) {
 
+  // 0 = video terminó
+  if (event.data === 0) {
+    console.log("Video terminó  cargando siguiente");
+
+    reproducir(); //  carga el siguiente automáticamente
+  }
+}
 // ===============================
 // REPRODUCCIÓN
 // ===============================
@@ -65,11 +74,13 @@ function reproducir() {
     if (tiempo < acumulado + dur) {
       let offset = tiempo - acumulado;
 
-      player.loadVideoById({
-        videoId: canal.videos[i],
-        startSeconds: Math.floor(offset)
-      });
-
+if (player.getVideoData().video_id !== canal.videos[i]) {
+  player.loadVideoById({
+    videoId: canal.videos[i],
+    startSeconds: Math.floor(offset)
+  });
+}
+      
       if (userInteracted) player.unMute();
       else player.mute();
 
