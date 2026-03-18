@@ -1,6 +1,30 @@
 const EPOCH = 1700000000;
 
-let canales = [];
+//  DATOS DIRECTOS (SIN JSON)
+const canales = [
+  {
+    nombre: "CIUDADES",
+    videos: [
+      "ui3n5jDnZo8","1Np-Ea6XCgc","VkIuG4AYTp0"
+    ],
+    duraciones: [1369, 887, 1142]
+  },
+  {
+    nombre: "HISTORIA",
+    videos: [
+      "aDcKkboqLKw","n1JXIUsGZR8","4dKumyZhw24"
+    ],
+    duraciones: [2492,2484,2521]
+  },
+  {
+    nombre: "UNIVERSO",
+    videos: [
+      "Yw7q6xHneN0","nzICDsGjAEA","11hpS7F0YuI"
+    ],
+    duraciones: [3008,2580,2521]
+  }
+];
+
 let canalActual = 0;
 let player;
 let userInteracted = false;
@@ -31,15 +55,13 @@ window.onYouTubeIframeAPIReady = function () {
 };
 
 // ===============================
-// REPRODUCCIÓN TV REAL
+// REPRODUCCIÓN TV
 // ===============================
 function reproducir() {
-  if (!canales.length || !player) return;
-
   const canal = canales[canalActual];
-  const total = canal.duraciones.reduce((a,b)=>a+b,0);
 
-  const ahora = Math.floor(Date.now() / 1000);
+  const total = canal.duraciones.reduce((a,b)=>a+b,0);
+  const ahora = Math.floor(Date.now()/1000);
   const tiempo = (ahora - EPOCH) % total;
 
   let acumulado = 0;
@@ -67,7 +89,7 @@ function reproducir() {
 }
 
 // ===============================
-// LISTA DE CANALES
+// CANALES
 // ===============================
 function crearCanales() {
   const cont = document.getElementById("canales");
@@ -95,7 +117,7 @@ function crearCanales() {
 }
 
 // ===============================
-// TITULOS (NO BLOQUEA)
+// TITULOS REALES
 // ===============================
 function cargarTitulos() {
   canales.forEach(canal => {
@@ -156,11 +178,4 @@ function iniciarTV() {
 }
 
 // ===============================
-// CARGAR JSON
-// ===============================
-fetch("canales.json")
-  .then(res => res.json())
-  .then(data => {
-    canales = data;
-    cargarYouTubeAPI();
-  });
+cargarYouTubeAPI();
