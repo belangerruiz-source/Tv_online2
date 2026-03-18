@@ -1,4 +1,7 @@
-const EPOCH = 1700000000; // punto fijo (puedes dejarlo así)
+const EPOCH = 1700000000;
+
+let canales = [];
+let canalActual = 0;
 
 function reproducir() {
   const canal = canales[canalActual];
@@ -22,3 +25,22 @@ function reproducir() {
     acumulado += dur;
   }
 }
+
+fetch("canales.json")
+  .then(response => {
+    if (!response.ok) {
+      throw new Error("No se pudo cargar canales.json");
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log("Datos cargados:", data);
+    canales = data;
+
+    canalActual = 0;
+    reproducir();
+  })
+  .catch(error => {
+    console.error("Error:", error);
+    alert("Error cargando los canales");
+  });
