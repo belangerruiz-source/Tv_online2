@@ -114,17 +114,53 @@ function mostrarProgramacion(actualIndex) {
 
   let html = `<h3>${canal.nombre}</h3>`;
 
+  const ahora = Math.floor(Date.now() / 1000);
+  const total = canal.duraciones.reduce((a,b)=>a+b,0);
+
+  let tiempo = (ahora - EPOCH) % total;
+
+  let acumulado = 0;
+  let inicioReal = new Date();
+
   for (let i = 0; i < canal.videos.length; i++) {
-    html += `
-      <div style="color:${i===actualIndex?"yellow":"white"}; margin:5px;">
-        ${i===actualIndex?" ":""}Programa ${i+1}
-      </div>
-    `;
+    let dur = canal.duraciones[i];
+
+    if (tiempo < acumulado + dur) {
+
+      let offset = tiempo - acumulado;
+
+      //  inicio del programa actual
+      let inicio = new Date(inicioReal.getTime() - offset * 1000);
+
+      //  mostramos 8 programas (tipo TV)
+      for (let j = 0; j < 8; j++) {
+
+        let index = (i + j) % canal.videos.length;
+        let vid = canal.videos[index];
+        let duracion = canal.duraciones[index];
+
+        let fin = new Date(inicio.getTime() + duracion * 1000);
+
+        let titulo = generarTitulo(vid);
+
+        html += `
+          <div style="margin:8px; color:${j===0?"yellow":"white"};">
+            <b>${formatearHora(inicio)} - ${formatearHora(fin)}</b><br>
+            ${titulo}
+          </div>
+        `;
+
+        inicio = fin;
+      }
+
+      break;
+    }
+
+    acumulado += dur;
   }
 
   cont.innerHTML = html;
 }
-
 // ===============================
 function iniciarTV() {
   crearCanales();
@@ -133,3 +169,14 @@ function iniciarTV() {
 
 // ===============================
 cargarYouTubeAPI();
+
+function formatearHora(fecha) {
+  return fecha.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+
+function generarTitulo(id) {
+  return "Programa " + id.substring(0, 6);
+}
