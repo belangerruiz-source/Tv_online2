@@ -142,7 +142,7 @@ function mostrarProgramacion() {
   const cont = document.getElementById("programacion");
   const canal = canales[canalActual];
 
-  let html = `<h3 style="color:white;">${canal.nombre}</h3>`;
+  let html = `<h3>${canal.nombre}</h3>`;
 
   const ahora = Math.floor(Date.now() / 1000);
   const total = canal.duraciones.reduce((a,b)=>a+b,0);
@@ -151,6 +151,44 @@ function mostrarProgramacion() {
 
   let acumulado = 0;
   let inicioReal = new Date();
+
+  for (let i = 0; i < canal.videos.length; i++) {
+    let dur = canal.duraciones[i];
+
+    if (tiempo < acumulado + dur) {
+
+      let offset = tiempo - acumulado;
+      let inicio = new Date(inicioReal.getTime() - offset * 1000);
+
+      //  mostramos hasta 10 programas
+      for (let j = 0; j < 10; j++) {
+
+        let index = (i + j) % canal.videos.length;
+        let vid = canal.videos[index];
+        let duracion = canal.duraciones[index];
+
+        let fin = new Date(inicio.getTime() + duracion * 1000);
+
+        let titulo = generarTitulo(vid);
+
+        html += `
+          <div style="margin:6px; color:${j===0?"yellow":"white"};">
+            <b>${formatearHora(inicio)} - ${formatearHora(fin)}</b><br>
+            ${titulo}
+          </div>
+        `;
+
+        inicio = fin;
+      }
+
+      break;
+    }
+
+    acumulado += dur;
+  }
+
+  cont.innerHTML = html;
+}
 
   // encontrar programa actual
   for (let i = 0; i < canal.videos.length; i++) {
@@ -171,7 +209,10 @@ function mostrarProgramacion() {
 
         let fin = new Date(inicio.getTime() + duracion * 1000);
 
-        let titulo = titulosCache[vid] || "Cargando...";
+        let titulo = titulosCache[vid] || generarTitulo(vid);
+        function generarTitulo(id) {
+  return "Programa " + id.substring(0, 6);
+}
 
         html += `
           <div style="margin:8px; color:${j===i?"yellow":"white"};">
@@ -208,7 +249,9 @@ function iniciarTV() {
   reproducir();
   cargarTitulos();
 
-  setInterval(reproducir, 10000);
+  setInterval(() => {
+  mostrarProgramacion(); // solo actualiza guía
+}, 30000);
 }
 
 // ===============================
