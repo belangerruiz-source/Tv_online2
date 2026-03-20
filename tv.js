@@ -17,6 +17,11 @@ const canales = [
     videos: ["Yw7q6xHneN0","nzICDsGjAEA","11hpS7F0YuI"],
     duraciones: [3008,2580,2521]
   }
+  {
+nombre: "PROCESOS"
+videos: [https://www.youtube.com/playlist?list=PLCKML06wO4bl4kUTJeL7mBH8MqZUnhCi3],
+ duraciones:[4000,3500,3200]
+	}
 ];
 
 let canalActual = 0;
