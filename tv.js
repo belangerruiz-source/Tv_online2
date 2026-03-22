@@ -19,7 +19,7 @@ const canales = [
   }
   {
 nombre: "PROCESOS"
-videos: [https://www.youtube.com/playlist?list=PLCKML06wO4bl4kUTJeL7mBH8MqZUnhCi3],
+videos: ["PLCKML06wO4bl4kUTJeL7mBH8MqZUnhCi3"],
  duraciones:[4000,3500,3200]
 	}
 ];
