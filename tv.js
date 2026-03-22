@@ -1,26 +1,47 @@
+// ===============================
+window.onerror = function(msg, url, line) {
+  document.body.innerHTML = "<h2 style='color:red'>ERROR:</h2>" + msg + "<br>Linea: " + line;
+  console.error(msg);
+};
+
+// ===============================
 let player;
 let canalActual = 0;
 let canales = [];
 
 // ===============================
-function log(msg) {
-  document.body.innerHTML += `<p style="color:lime">${msg}</p>`;
-  console.log(msg);
+function iniciar() {
+  console.log("Iniciando sistema...");
+
+  fetch("canales.json")
+    .then(r => r.json())
+    .then(data => {
+      console.log("JSON cargado", data);
+
+      canales = data;
+
+      if (!canales || canales.length === 0) {
+        throw new Error("JSON vacío");
+      }
+
+      cargarYouTube();
+    })
+    .catch(e => {
+      document.body.innerHTML = "<h2 style='color:red'>Error cargando JSON</h2>";
+      console.error(e);
+    });
 }
 
 // ===============================
-//  YOUTUBE API
-// ===============================
-function cargarYouTubeAPI() {
-  log("Cargando YouTube API...");
-
+function cargarYouTube() {
   const tag = document.createElement("script");
   tag.src = "https://www.youtube.com/iframe_api";
   document.body.appendChild(tag);
 }
 
+// ===============================
 window.onYouTubeIframeAPIReady = function () {
-  log("YouTube API lista");
+  console.log("YT listo");
 
   player = new YT.Player("player", {
     width: "100%",
@@ -33,72 +54,35 @@ window.onYouTubeIframeAPIReady = function () {
     },
     events: {
       onReady: () => {
-        log("Player listo");
-        iniciarSiListo();
+        console.log("Player listo");
+        crearCanales();
+        reproducir();
       }
     }
   });
 };
 
 // ===============================
-//  CARGAR JSON
-// ===============================
-function cargarCanales() {
-  log("Cargando canales.json...");
-
-  fetch("canales.json")
-    .then(res => {
-      if (!res.ok) throw new Error("No carga JSON");
-      return res.json();
-    })
-    .then(data => {
-      log("JSON cargado OK");
-      canales = data;
-      iniciarSiListo();
-    })
-    .catch(err => {
-      log("ERROR JSON");
-      console.error(err);
-    });
-}
-
-// ===============================
-function iniciarSiListo() {
-  if (!player || canales.length === 0) return;
-
-  log("Iniciando TV...");
-
-  crearCanales();
-  reproducir();
-}
-
-// ===============================
-//  REPRODUCIR
-// ===============================
 function reproducir() {
   const canal = canales[canalActual];
 
   if (!canal || !canal.programas || canal.programas.length === 0) {
-    log("Canal sin programas");
-    return;
+    throw new Error("Canal sin programas");
   }
 
-  const video = canal.programas[0];
+  let video = canal.programas[0];
 
-  log("Reproduciendo: " + video.id);
+  console.log("Reproduciendo:", video.id);
 
   player.loadVideoById(video.id);
 }
 
 // ===============================
-//  CANALES UI
-// ===============================
 function crearCanales() {
   const cont = document.getElementById("canales");
 
   if (!cont) {
-    log("No existe div canales");
-    return;
+    throw new Error("No existe #canales en HTML");
   }
 
   cont.innerHTML = "";
@@ -106,7 +90,7 @@ function crearCanales() {
   canales.forEach((c, i) => {
     const div = document.createElement("div");
 
-    div.innerText = (i+1) + ". " + c.nombre;
+    div.innerText = (i + 1) + ". " + c.nombre;
     div.style.padding = "10px";
     div.style.cursor = "pointer";
 
@@ -121,5 +105,4 @@ function crearCanales() {
 }
 
 // ===============================
-cargarYouTubeAPI();
-cargarCanales();
+iniciar();
