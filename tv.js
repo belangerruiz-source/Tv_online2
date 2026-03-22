@@ -1,35 +1,62 @@
 const EPOCH = 1700000000;
 
-//  CANALES FIJOS (estables)
-const canales = [
-  {
-    nombre: "CIUDADES",
-    videos: ["ui3n5jDnZo8","1Np-Ea6XCgc","VkIuG4AYTp0"],
-    duraciones: [1369, 887, 1142]
-  },
-  {
-    nombre: "HISTORIA",
-    videos: ["aDcKkboqLKw","n1JXIUsGZR8","4dKumyZhw24"],
-    duraciones: [2492,2484,2521]
-  },
-  {
-    nombre: "UNIVERSO",
-    videos: ["Yw7q6xHneN0","nzICDsGjAEA","11hpS7F0YuI"],
-    duraciones: [3008,2580,2521]
-  }
-  {
-nombre: "PROCESOS"
-videos: ["PLCKML06wO4bl4kUTJeL7mBH8MqZUnhCi3"],
- duraciones:[4000,3500,3200]
-	}
-];
-
 let canalActual = 0;
 let player;
-let userInteracted = false;
 
 // ===============================
-// YOUTUBE API
+//  CANALES (TUS PLAYLISTS)
+// ===============================
+const canales = [
+
+  {
+    nombre: "UNIVERSO",
+    programas: [
+      { id: "Yw7q6xHneN0", titulo: "El universo profundo", descripcion: "Exploración del cosmos.", duracion: 3000, inicio: 1700000000, diasActivo: 100 },
+      { id: "nzICDsGjAEA", titulo: "Galaxias lejanas", descripcion: "Viaje a otras galaxias.", duracion: 2600, inicio: 1700000000, diasActivo: 100 },
+      { id: "11hpS7F0YuI", titulo: "Agujeros negros", descripcion: "Los misterios del universo.", duracion: 2500, inicio: 1700000000, diasActivo: 100 }
+    ]
+  },
+
+  {
+    nombre: "PROCESOS",
+    programas: [
+      { id: "loz_i80X7ug", titulo: "Cómo se fabrica", descripcion: "Procesos industriales.", duracion: 1500, inicio: 1700000000, diasActivo: 100 },
+      { id: "hQj_MwShpPA", titulo: "Tecnología en acción", descripcion: "Máquinas avanzadas.", duracion: 3000, inicio: 1700000000, diasActivo: 100 },
+      { id: "6fELDNXn3ZY", titulo: "Ingeniería moderna", descripcion: "Sistemas complejos.", duracion: 3100, inicio: 1700000000, diasActivo: 100 }
+    ]
+  },
+
+  {
+    nombre: "DOCUMENTALES",
+    programas: [
+      { id: "EgaG_aKBSno", titulo: "Documental completo", descripcion: "Historia y sociedad.", duracion: 2600, inicio: 1700000000, diasActivo: 100 },
+      { id: "6ZcF7hklYQg", titulo: "Planeta Tierra", descripcion: "Naturaleza extrema.", duracion: 1100, inicio: 1700000000, diasActivo: 100 },
+      { id: "aqxpcRod_9k", titulo: "Vida salvaje", descripcion: "Fauna mundial.", duracion: 1000, inicio: 1700000000, diasActivo: 100 }
+    ]
+  },
+
+  {
+    nombre: "HISTORIA",
+    programas: [
+      { id: "aDcKkboqLKw", titulo: "Imperios antiguos", descripcion: "Civilizaciones antiguas.", duracion: 2400, inicio: 1700000000, diasActivo: 100 },
+      { id: "n1JXIUsGZR8", titulo: "Guerras mundiales", descripcion: "Eventos históricos.", duracion: 2400, inicio: 1700000000, diasActivo: 100 },
+      { id: "4dKumyZhw24", titulo: "Edad media", descripcion: "Historia europea.", duracion: 2500, inicio: 1700000000, diasActivo: 100 }
+    ]
+  },
+
+  {
+    nombre: "CIUDADES",
+    programas: [
+      { id: "ui3n5jDnZo8", titulo: "Tokio de noche", descripcion: "Ciudad iluminada.", duracion: 1300, inicio: 1700000000, diasActivo: 100 },
+      { id: "1Np-Ea6XCgc", titulo: "Dubái futurista", descripcion: "Arquitectura extrema.", duracion: 900, inicio: 1700000000, diasActivo: 100 },
+      { id: "VkIuG4AYTp0", titulo: "Nueva York", descripcion: "La ciudad que nunca duerme.", duracion: 1100, inicio: 1700000000, diasActivo: 100 }
+    ]
+  }
+
+];
+
+// ===============================
+//  YOUTUBE API
 // ===============================
 function cargarYouTubeAPI() {
   const tag = document.createElement("script");
@@ -38,7 +65,7 @@ function cargarYouTubeAPI() {
 }
 
 window.onYouTubeIframeAPIReady = function () {
-  player = new YT.Player("video", {
+  player = new YT.Player("player", {
     width: "100%",
     height: "100%",
     videoId: "",
@@ -47,72 +74,93 @@ window.onYouTubeIframeAPIReady = function () {
       controls: 1
     },
     events: {
-  onReady: iniciarTV,
-  onStateChange: onPlayerStateChange
+      onReady: iniciarTV,
+      onStateChange: onPlayerStateChange
     }
   });
 };
+
+// ===============================
+//  SIGUIENTE VIDEO AUTOMÁTICO
+// ===============================
 function onPlayerStateChange(event) {
-
-  // 0 = video terminó
   if (event.data === 0) {
-    console.log("Video terminó  cargando siguiente");
-
-    reproducir(); //  carga el siguiente automáticamente
+    reproducir();
   }
 }
+
 // ===============================
-// REPRODUCCIÓN
+//  ACTIVOS
+// ===============================
+function obtenerActivos(canal) {
+  const ahora = Math.floor(Date.now() / 1000);
+
+  return canal.programas.filter(p => {
+    const fin = p.inicio + (p.diasActivo * 86400);
+    return ahora >= p.inicio && ahora <= fin;
+  });
+}
+
+// ===============================
+//  ROTACIÓN
+// ===============================
+function rotar(lista) {
+  const dia = Math.floor((Date.now()/1000 - EPOCH) / 86400);
+  const r = dia % lista.length;
+  return lista.slice(r).concat(lista.slice(0, r));
+}
+
+// ===============================
+//  REPRODUCCIÓN
 // ===============================
 function reproducir() {
-  const canal = canales[canalActual];
+  let canal = canales[canalActual];
+  let activos = obtenerActivos(canal);
 
-  const total = canal.duraciones.reduce((a,b)=>a+b,0);
+  if (activos.length === 0) return;
+
+  activos = rotar(activos);
+
+  const total = activos.reduce((a,b)=>a+b.duracion,0);
   const ahora = Math.floor(Date.now()/1000);
   const tiempo = (ahora - EPOCH) % total;
 
   let acumulado = 0;
 
-  for (let i = 0; i < canal.videos.length; i++) {
-    let dur = canal.duraciones[i];
+  for (let i = 0; i < activos.length; i++) {
+    let p = activos[i];
 
-    if (tiempo < acumulado + dur) {
+    if (tiempo < acumulado + p.duracion) {
       let offset = tiempo - acumulado;
 
-if (player.getVideoData().video_id !== canal.videos[i]) {
-  player.loadVideoById({
-    videoId: canal.videos[i],
-    startSeconds: Math.floor(offset)
-  });
-}
-      
-      if (userInteracted) player.unMute();
-      else player.mute();
+      player.loadVideoById({
+        videoId: p.id,
+        startSeconds: Math.floor(offset)
+      });
 
-      mostrarProgramacion(i);
+      mostrarProgramacion(activos, i);
       return;
     }
 
-    acumulado += dur;
+    acumulado += p.duracion;
   }
 }
 
 // ===============================
-// CANALES
+//  CANALES UI
 // ===============================
 function crearCanales() {
   const cont = document.getElementById("canales");
   cont.innerHTML = "";
 
-  canales.forEach((canal, i) => {
+  canales.forEach((c, i) => {
     const div = document.createElement("div");
 
-    div.className = "canal" + (i === canalActual ? " activo" : "");
-    div.innerText = canal.nombre;
+    div.className = "canal" + (i===canalActual?" activo":"");
+    div.innerText = (i+1) + ". " + c.nombre;
 
     div.onclick = () => {
       canalActual = i;
-      userInteracted = true;
       reproducir();
       crearCanales();
     };
@@ -122,61 +170,40 @@ function crearCanales() {
 }
 
 // ===============================
-// PROGRAMACIÓN SIMPLE (FUNCIONA)
+//  PROGRAMACIÓN
 // ===============================
-function mostrarProgramacion(actualIndex) {
+function mostrarProgramacion(programas, actual) {
   const cont = document.getElementById("programacion");
-  const canal = canales[canalActual];
 
-  let html = `<h3>${canal.nombre}</h3>`;
+  let html = `<h3>${canales[canalActual].nombre}</h3>`;
 
-  const ahora = Math.floor(Date.now() / 1000);
-  const total = canal.duraciones.reduce((a,b)=>a+b,0);
+  let inicio = new Date();
 
-  let tiempo = (ahora - EPOCH) % total;
+  for (let i = 0; i < 10; i++) {
+    let index = (actual + i) % programas.length;
+    let p = programas[index];
 
-  let acumulado = 0;
-  let inicioReal = new Date();
+    let fin = new Date(inicio.getTime() + p.duracion*1000);
 
-  for (let i = 0; i < canal.videos.length; i++) {
-    let dur = canal.duraciones[i];
+    html += `
+      <div style="margin:10px; color:${i===0?"yellow":"white"};">
+        <b>${formatearHora(inicio)} - ${formatearHora(fin)}</b><br>
+        ${p.titulo}<br>
+        <span style="color:gray; font-size:12px;">${p.descripcion}</span>
+      </div>
+    `;
 
-    if (tiempo < acumulado + dur) {
-
-      let offset = tiempo - acumulado;
-
-      //  inicio del programa actual
-      let inicio = new Date(inicioReal.getTime() - offset * 1000);
-
-      //  mostramos 8 programas (tipo TV)
-      for (let j = 0; j < 8; j++) {
-
-        let index = (i + j) % canal.videos.length;
-        let vid = canal.videos[index];
-        let duracion = canal.duraciones[index];
-
-        let fin = new Date(inicio.getTime() + duracion * 1000);
-
-        let titulo = generarTitulo(vid);
-
-        html += `
-          <div style="margin:8px; color:${j===0?"yellow":"white"};">
-            <b>${formatearHora(inicio)} - ${formatearHora(fin)}</b><br>
-            ${titulo}
-          </div>
-        `;
-
-        inicio = fin;
-      }
-
-      break;
-    }
-
-    acumulado += dur;
+    inicio = fin;
   }
 
   cont.innerHTML = html;
 }
+
+// ===============================
+function formatearHora(f) {
+  return f.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+}
+
 // ===============================
 function iniciarTV() {
   crearCanales();
@@ -185,14 +212,3 @@ function iniciarTV() {
 
 // ===============================
 cargarYouTubeAPI();
-
-function formatearHora(fecha) {
-  return fecha.toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-}
-
-function generarTitulo(id) {
-  return "Programa " + id.substring(0, 6);
-}
