@@ -1,18 +1,27 @@
 let player;
 let canalActual = 0;
 let canales = [];
-let cargado = false;
+
+// ===============================
+function log(msg) {
+  document.body.innerHTML += `<p style="color:lime">${msg}</p>`;
+  console.log(msg);
+}
 
 // ===============================
 //  YOUTUBE API
 // ===============================
 function cargarYouTubeAPI() {
+  log("Cargando YouTube API...");
+
   const tag = document.createElement("script");
   tag.src = "https://www.youtube.com/iframe_api";
   document.body.appendChild(tag);
 }
 
 window.onYouTubeIframeAPIReady = function () {
+  log("YouTube API lista");
+
   player = new YT.Player("player", {
     width: "100%",
     height: "100%",
@@ -23,8 +32,10 @@ window.onYouTubeIframeAPIReady = function () {
       mute: 1
     },
     events: {
-      onReady: intentarInicio,
-      onStateChange: estadoPlayer
+      onReady: () => {
+        log("Player listo");
+        iniciarSiListo();
+      }
     }
   });
 };
@@ -33,80 +44,71 @@ window.onYouTubeIframeAPIReady = function () {
 //  CARGAR JSON
 // ===============================
 function cargarCanales() {
+  log("Cargando canales.json...");
+
   fetch("canales.json")
     .then(res => {
-      if (!res.ok) throw new Error("No se pudo cargar JSON");
+      if (!res.ok) throw new Error("No carga JSON");
       return res.json();
     })
     .then(data => {
+      log("JSON cargado OK");
       canales = data;
-      cargado = true;
-      intentarInicio();
+      iniciarSiListo();
     })
     .catch(err => {
+      log("ERROR JSON");
       console.error(err);
-      alert("Error cargando canales.json");
     });
 }
 
 // ===============================
-//  INICIO SEGURO
-// ===============================
-function intentarInicio() {
-  if (!player || !cargado) return;
+function iniciarSiListo() {
+  if (!player || canales.length === 0) return;
+
+  log("Iniciando TV...");
 
   crearCanales();
   reproducir();
 }
 
 // ===============================
-//  REPRODUCCIÓN
+//  REPRODUCIR
 // ===============================
 function reproducir() {
   const canal = canales[canalActual];
 
-  if (!canal || !canal.programas || canal.programas.length === 0) return;
+  if (!canal || !canal.programas || canal.programas.length === 0) {
+    log("Canal sin programas");
+    return;
+  }
 
-  const video = canal.programas[0]; //  inicia con el primero SIEMPRE
+  const video = canal.programas[0];
+
+  log("Reproduciendo: " + video.id);
 
   player.loadVideoById(video.id);
 }
 
 // ===============================
-//  SIGUIENTE VIDEO
-// ===============================
-function estadoPlayer(e) {
-  if (e.data === YT.PlayerState.ENDED) {
-    siguienteVideo();
-  }
-}
-
-function siguienteVideo() {
-  const canal = canales[canalActual];
-
-  let actual = player.getVideoData().video_id;
-  let index = canal.programas.findIndex(p => p.id === actual);
-
-  let siguiente = canal.programas[(index + 1) % canal.programas.length];
-
-  player.loadVideoById(siguiente.id);
-}
-
-// ===============================
-//  UI CANALES
+//  CANALES UI
 // ===============================
 function crearCanales() {
   const cont = document.getElementById("canales");
+
+  if (!cont) {
+    log("No existe div canales");
+    return;
+  }
+
   cont.innerHTML = "";
 
   canales.forEach((c, i) => {
     const div = document.createElement("div");
 
-    div.style.padding = "12px";
-    div.style.borderBottom = "1px solid #333";
+    div.innerText = (i+1) + ". " + c.nombre;
+    div.style.padding = "10px";
     div.style.cursor = "pointer";
-
-    div.innerText = (i + 1) + ". " + c.nombre;
 
     div.onclick = () => {
       canalActual = i;
