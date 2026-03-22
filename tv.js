@@ -8,19 +8,15 @@ fetch("canales.json")
     canales = data;
     crearCanales();
     reproducir();
+    mostrarProgramacion();
   });
 
 // ===============================
 function reproducir() {
   const canal = canales[canalActual];
-
-  if (!canal || !canal.programas.length) return;
-
   const video = canal.programas[0].id;
 
-  const player = document.getElementById("player");
-
-  player.innerHTML = `
+  document.getElementById("player").innerHTML = `
     <iframe 
       width="100%" 
       height="100%" 
@@ -39,17 +35,40 @@ function crearCanales() {
 
   canales.forEach((c, i) => {
     const div = document.createElement("div");
-
+    div.className = "canal";
     div.innerText = (i + 1) + ". " + c.nombre;
-    div.style.padding = "12px";
-    div.style.cursor = "pointer";
-    div.style.color = "yellow";
 
     div.onclick = () => {
       canalActual = i;
       reproducir();
+      mostrarProgramacion();
     };
 
     cont.appendChild(div);
   });
 }
+
+// ===============================
+function mostrarProgramacion() {
+  const canal = canales[canalActual];
+  const cont = document.getElementById("programacion");
+
+  cont.innerHTML = "";
+
+  canal.programas.slice(0, 5).forEach((p, i) => {
+    const div = document.createElement("div");
+    div.innerText = "• " + (p.titulo || "Programa") ;
+    cont.appendChild(div);
+  });
+}
+
+// ===============================
+//  FULLSCREEN REAL
+// ===============================
+document.getElementById("fullscreenBtn").onclick = () => {
+  const elem = document.documentElement;
+
+  if (elem.requestFullscreen) {
+    elem.requestFullscreen();
+  }
+};
