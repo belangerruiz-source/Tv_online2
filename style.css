@@ -41,3 +41,14 @@ body {
   background: #222;
   cursor: pointer;
 }
+#guia {
+  height: 200px;
+  overflow-x: scroll;
+  white-space: nowrap;
+  background: #111;
+}
+.guia-canal {
+  display: inline-block;
+  width: 250px;
+  margin-right: 10px;
+}
