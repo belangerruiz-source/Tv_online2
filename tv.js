@@ -1,35 +1,39 @@
-let canalActual = 0;
-let canales = [];
-let indiceVideo = 0;
-let timeoutCambio = null;
-mostrarGuiaGlobal();
+// ===============================
+// CONFIG GLOBAL
+// ===============================
+const EPOCH = 1700000000;
 
+let canales = [];
+let canalActual = 0;
+let indiceVideo = 0;
+
+// ===============================
+// INICIO
 // ===============================
 fetch("canales.json")
   .then(res => res.json())
   .then(data => {
     canales = data;
 
-    //  recuperar último canal
     const guardado = localStorage.getItem("canal");
     if (guardado !== null) canalActual = parseInt(guardado);
 
     crearCanales();
-    iniciarCanal();
+    reproducir();
+    mostrarProgramacion();
+  })
+  .catch(err => {
+    document.body.innerHTML = "<h2 style='color:red'>Error cargando canales.json</h2>";
+    console.error(err);
   });
 
 // ===============================
-function iniciarCanal() {
-  indiceVideo = 0;
-  reproducir();
-  mostrarProgramacion();
-}
-
+// REPRODUCCIÓN TIPO TV REAL
 // ===============================
-const EPOCH = 1700000000;
-
 function reproducir() {
+
   const canal = canales[canalActual];
+  if (!canal || !canal.programas) return;
 
   const total = canal.programas.reduce((acc, p) => acc + (p.duracion || 1800), 0);
 
@@ -39,21 +43,22 @@ function reproducir() {
   let acumulado = 0;
 
   for (let i = 0; i < canal.programas.length; i++) {
+
     let dur = canal.programas[i].duracion || 1800;
 
     if (tiempo < acumulado + dur) {
+
       indiceVideo = i;
       let offset = tiempo - acumulado;
-
-      const video = canal.programas[i].id;
+      let video = canal.programas[i];
 
       document.getElementById("player").innerHTML = `
         <iframe 
           width="100%" 
           height="100%" 
-          src="https://www.youtube.com/embed/${video}?autoplay=1&start=${offset}&mute=0"
+          src="https://www.youtube.com/embed/${video.id}?autoplay=1&start=${offset}&mute=0&controls=0&modestbranding=1&rel=0"
           frameborder="0"
-          allow="autoplay; encrypted-media"
+          allow="autoplay"
           allowfullscreen>
         </iframe>
       `;
@@ -66,46 +71,25 @@ function reproducir() {
 }
 
 // ===============================
-function siguienteVideo() {
-  const canal = canales[canalActual];
-
-  indiceVideo++;
-
-  if (indiceVideo >= canal.programas.length) {
-    indiceVideo = 0; // loop
-  }
-
-  reproducir();
-  mostrarProgramacion();
-}
-
-// ===============================
-function cambiarCanal(direccion) {
-  canalActual += direccion;
-
-  if (canalActual < 0) canalActual = canales.length - 1;
-  if (canalActual >= canales.length) canalActual = 0;
-
-  //  guardar canal
-  localStorage.setItem("canal", canalActual);
-
-  iniciarCanal();
-}
-
+// CREAR LISTA DE CANALES
 // ===============================
 function crearCanales() {
   const cont = document.getElementById("canales");
   cont.innerHTML = "";
 
   canales.forEach((c, i) => {
+
     const div = document.createElement("div");
     div.className = "canal";
+
     div.innerText = (i + 1) + ". " + c.nombre;
 
     div.onclick = () => {
       canalActual = i;
       localStorage.setItem("canal", canalActual);
-      iniciarCanal();
+
+      reproducir();
+      mostrarProgramacion();
     };
 
     cont.appendChild(div);
@@ -113,39 +97,47 @@ function crearCanales() {
 }
 
 // ===============================
+// PROGRAMACIÓN (EPG LIGERO)
+// ===============================
 function mostrarProgramacion() {
+
   const cont = document.getElementById("programacion");
   cont.innerHTML = "";
 
-  const ahora = new Date();
   const canal = canales[canalActual];
+  let ahora = new Date();
 
-  let tiempoBase = ahora.getTime();
-
-  for (let i = 0; i < 24; i++) {
+  //  SOLO 6 PROGRAMAS PARA NO LAG
+  for (let i = 0; i < 6; i++) {
 
     let prog = canal.programas[(indiceVideo + i) % canal.programas.length];
     let dur = (prog.duracion || 1800) * 1000;
 
-    let hora = new Date(tiempoBase);
+    let hora = new Date(ahora.getTime() + i * dur);
 
     let div = document.createElement("div");
+    div.style.marginBottom = "12px";
 
     div.innerHTML = `
-      <b style="color:#00ffcc">
+      <div style="color:#00ffcc; font-size:18px;">
         ${hora.getHours().toString().padStart(2,"0")}:${hora.getMinutes().toString().padStart(2,"0")}
-      </b>
-      <div style="font-size:18px">${prog.titulo}</div>
-      <div style="font-size:14px; color:#aaa">${prog.descripcion}</div>
+      </div>
+
+      <div style="font-size:20px; font-weight:bold;">
+        ${prog.titulo || "Programa"}
+      </div>
+
+      <div style="font-size:16px; color:#aaa;">
+        ${prog.descripcion || ""}
+      </div>
     `;
 
     cont.appendChild(div);
-
-    tiempoBase += dur;
   }
 }
+
 // ===============================
-//  CONTROL REMOTO (TECLADO / TV)
+// CONTROL REMOTO (TECLADO)
 // ===============================
 document.addEventListener("keydown", (e) => {
 
@@ -158,32 +150,22 @@ document.addEventListener("keydown", (e) => {
   }
 
   if (e.key === "Enter") {
-    siguienteVideo();
+    reproducir();
   }
 });
 
+// ===============================
+// CAMBIAR CANAL
+// ===============================
+function cambiarCanal(dir) {
 
-function mostrarGuiaGlobal() {
-  const guia = document.getElementById("guia");
-  guia.innerHTML = "";
+  canalActual += dir;
 
-  canales.forEach((canal, index) => {
-    let div = document.createElement("div");
-    div.className = "guia-canal";
+  if (canalActual < 0) canalActual = canales.length - 1;
+  if (canalActual >= canales.length) canalActual = 0;
 
-    let contenido = `<b>${index + 1}. ${canal.nombre}</b><br>`;
+  localStorage.setItem("canal", canalActual);
 
-    for (let i = 0; i < 5; i++) {
-      let prog = canal.programas[i];
-
-      contenido += `
-        <div style="font-size:14px;">
-          • ${prog.titulo}
-        </div>
-      `;
-    }
-
-    div.innerHTML = contenido;
-    guia.appendChild(div);
-  });
+  reproducir();
+  mostrarProgramacion();
 }
