@@ -1,17 +1,15 @@
 // ===============================
 let canales = [];
 let canalActual = null;
-
 let estadoCanales = {};
 let intervalo = null;
 
 // ===============================
 fetch("canales.json")
-  .then(res => res.json())
+  .then(r => r.json())
   .then(data => {
     canales = data;
 
-    //  CARGAR PROGRESO GUARDADO
     const guardado = localStorage.getItem("estadoTV");
     if (guardado) estadoCanales = JSON.parse(guardado);
 
@@ -31,18 +29,18 @@ function crearCanales() {
 
   canales.forEach((c, i) => {
 
-    let div = document.createElement("div");
+    const div = document.createElement("div");
     div.className = "canal";
     div.innerText = (i + 1) + ". " + c.nombre;
 
-    div.onclick = () => seleccionarCanal(i);
+    div.onclick = () => cambiarCanal(i);
 
     cont.appendChild(div);
   });
 }
 
 // ===============================
-function seleccionarCanal(i) {
+function cambiarCanal(i) {
 
   if (canalActual !== null) guardarEstado();
 
@@ -51,42 +49,44 @@ function seleccionarCanal(i) {
   if (!estadoCanales[i]) {
     estadoCanales[i] = {
       indice: 0,
-      tiempo: 0,
-      inicio: 0
+      tiempo: 0
     };
   }
 
-  reproducir(false, 2000);
+  //  destruir video actual (simula pausa real)
+  document.getElementById("player").innerHTML = "";
+
+  //  delay limpio
+  setTimeout(() => {
+    reproducir();
+  }, 2000);
+
   mostrarProgramacion();
 }
 
 // ===============================
-function reproducir(mute = false, delay = 0) {
+function reproducir() {
 
-  const canal = canales[canalActual];
   const estado = estadoCanales[canalActual];
+  const canal = canales[canalActual];
   const prog = canal.programas[estado.indice];
 
-  let start = Math.floor(estado.tiempo);
+  const start = Math.floor(estado.tiempo);
 
-  setTimeout(() => {
+  document.getElementById("player").innerHTML = `
+    <iframe 
+      width="100%" 
+      height="100%" 
+      src="https://www.youtube.com/embed/${prog.id}?autoplay=1&start=${start}&mute=0&controls=0&modestbranding=1&rel=0"
+      frameborder="0"
+      allow="autoplay"
+      allowfullscreen>
+    </iframe>
+  `;
 
-    document.getElementById("player").innerHTML = `
-      <iframe 
-        width="100%" 
-        height="100%" 
-        src="https://www.youtube.com/embed/${prog.id}?autoplay=1&start=${start}&mute=${mute ? 1 : 0}&controls=0&modestbranding=1&rel=0"
-        frameborder="0"
-        allow="autoplay"
-        allowfullscreen>
-      </iframe>
-    `;
+  estado.inicio = Date.now();
 
-    estado.inicio = Date.now();
-
-    iniciarProgreso();
-
-  }, delay);
+  iniciarProgreso();
 }
 
 // ===============================
@@ -100,12 +100,11 @@ function iniciarProgreso() {
     const canal = canales[canalActual];
     const prog = canal.programas[estado.indice];
 
-    let trans = Math.floor((Date.now() - estado.inicio) / 1000);
-    let actual = estado.tiempo + trans;
-    let total = prog.duracion; //  REAL
+    const actual = estado.tiempo + Math.floor((Date.now() - estado.inicio) / 1000);
+    const total = prog.duracion;
 
     if (actual >= total) {
-      siguienteVideo();
+      siguiente();
       return;
     }
 
@@ -115,7 +114,7 @@ function iniciarProgreso() {
 }
 
 // ===============================
-function siguienteVideo() {
+function siguiente() {
 
   const estado = estadoCanales[canalActual];
   const canal = canales[canalActual];
@@ -129,8 +128,7 @@ function siguienteVideo() {
 
   guardarTodo();
 
-  reproducir(false);
-  mostrarProgramacion();
+  reproducir();
 }
 
 // ===============================
@@ -138,8 +136,9 @@ function guardarEstado() {
 
   const estado = estadoCanales[canalActual];
 
-  let trans = Math.floor((Date.now() - estado.inicio) / 1000);
-  estado.tiempo += trans;
+  if (!estado.inicio) return;
+
+  estado.tiempo += Math.floor((Date.now() - estado.inicio) / 1000);
 
   guardarTodo();
 }
@@ -149,7 +148,7 @@ function actualizarUI(actual, total, prog) {
 
   const cont = document.getElementById("programacion");
 
-  let porcentaje = (actual / total) * 100;
+  const porcentaje = (actual / total) * 100;
 
   cont.innerHTML = `
     <div style="font-size:22px; color:#00ffcc;">
@@ -161,7 +160,7 @@ function actualizarUI(actual, total, prog) {
     </div>
 
     <div style="margin-top:10px;">
-      ${formato(actual)} / ${formato(total)}
+      ${fmt(actual)} / ${fmt(total)}
     </div>
 
     <div style="width:100%; height:6px; background:#333;">
@@ -170,7 +169,7 @@ function actualizarUI(actual, total, prog) {
 
     <hr>
 
-    <div style="font-size:18px;">Siguiente:</div>
+    <div>Siguiente:</div>
   `;
 
   const canal = canales[canalActual];
@@ -178,51 +177,47 @@ function actualizarUI(actual, total, prog) {
 
   for (let i = 1; i <= 5; i++) {
 
-    let next = canal.programas[(estado.indice + i) % canal.programas.length];
+    const next = canal.programas[(estado.indice + i) % canal.programas.length];
 
-    cont.innerHTML += `
-      <div>
-        ${next.titulo} (${formato(next.duracion)})
-      </div>
-    `;
+    cont.innerHTML += `<div>${next.titulo}</div>`;
   }
 }
 
 // ===============================
-function mostrarProgramacion() {
-  if (canalActual === null) return;
+function mostrarProgramacion(){}
+
+// ===============================
+function fmt(s){
+  let m = Math.floor(s/60);
+  let sec = s%60;
+  return `${m}:${sec.toString().padStart(2,"0")}`;
 }
 
 // ===============================
-function formato(seg) {
-  let m = Math.floor(seg / 60);
-  let s = seg % 60;
-  return `${m}:${s.toString().padStart(2,"0")}`;
-}
-
+// FULLSCREEN REAL
 // ===============================
-// FULLSCREEN TOGGLE REAL + ROTACIÓN
-// ===============================
-let fullscreen = false;
+let fs = false;
 
 document.getElementById("player").onclick = () => {
 
-  if (!fullscreen) {
+  if (!fs) {
+
     document.documentElement.requestFullscreen();
 
     if (screen.orientation && screen.orientation.lock) {
       screen.orientation.lock("landscape").catch(()=>{});
     }
 
-    fullscreen = true;
+    fs = true;
 
   } else {
+
     document.exitFullscreen();
 
     if (screen.orientation && screen.orientation.unlock) {
       screen.orientation.unlock();
     }
 
-    fullscreen = false;
+    fs = false;
   }
 };
