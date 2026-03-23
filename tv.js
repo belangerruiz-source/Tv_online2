@@ -1,8 +1,10 @@
+// ===============================
 let canales = [];
 let canalActual = null;
 let estadoCanales = {};
 let intervalo = null;
 let ocultarUI = null;
+let epgVisible = false;
 
 // ===============================
 fetch("canales.json")
@@ -23,14 +25,18 @@ function guardarTodo() {
 
 // ===============================
 function crearCanales() {
+
   const cont = document.getElementById("canales");
   cont.innerHTML = "";
 
   canales.forEach((c, i) => {
+
     const div = document.createElement("div");
     div.className = "canal";
     div.innerText = (i + 1) + ". " + c.nombre;
+
     div.onclick = () => cambiarCanal(i);
+
     cont.appendChild(div);
   });
 }
@@ -67,7 +73,7 @@ function reproducir() {
     <iframe 
       width="100%" 
       height="100%" 
-      src="https://www.youtube.com/embed/${prog.id}?autoplay=1&start=${start}&mute=0&controls=0&modestbranding=1"
+      src="https://www.youtube.com/embed/${prog.id}?autoplay=1&start=${start}&mute=0&controls=0&modestbranding=1&rel=0"
       frameborder="0"
       allow="autoplay"
       allowfullscreen>
@@ -125,7 +131,7 @@ function guardarEstado() {
 
   const estado = estadoCanales[canalActual];
 
-  if (!estado.inicio) return;
+  if (!estado || !estado.inicio) return;
 
   estado.tiempo += Math.floor((Date.now() - estado.inicio) / 1000);
 
@@ -139,7 +145,7 @@ function actualizarUI(actual, total, prog) {
 
   const porcentaje = (actual / total) * 100;
 
-  //  cálculo dinámico real
+  //  cálculo dinámico
   const ahora = new Date();
   const inicio = new Date(ahora.getTime() - (actual * 1000));
   const fin = new Date(inicio.getTime() + (total * 1000));
@@ -155,7 +161,7 @@ function actualizarUI(actual, total, prog) {
       ${prog.descripcion || ""}
     </div>
 
-    <div style="margin-top:8px;">
+    <div style="margin-top:5px;">
       ${hora(inicio)} - ${hora(fin)}
     </div>
 
@@ -168,7 +174,18 @@ function actualizarUI(actual, total, prog) {
     </div>
   `;
 
-  //  auto ocultar
+  //  siguiente programa
+  const canal = canales[canalActual];
+  const estado = estadoCanales[canalActual];
+  const next = canal.programas[(estado.indice + 1) % canal.programas.length];
+
+  cont.innerHTML += `
+    <div style="margin-top:10px; color:#ccc;">
+      Siguiente: ${next.titulo}
+    </div>
+  `;
+
+  //  ocultar UI
   clearTimeout(ocultarUI);
   ocultarUI = setTimeout(() => {
     cont.style.opacity = "0";
@@ -191,20 +208,23 @@ function hora(d){
 // ===============================
 document.getElementById("restartBtn").onclick = () => {
 
-  const estado = estadoCanales[canalActual];
-  estado.tiempo = 0;
+  if (canalActual === null) return;
+
+  estadoCanales[canalActual].tiempo = 0;
 
   reproducir();
 };
 
 // ===============================
-//  FULLSCREEN REAL
+//  FULLSCREEN CORRECTO
 // ===============================
+const player = document.getElementById("player");
+
 document.getElementById("fullscreenBtn").onclick = () => {
 
   if (!document.fullscreenElement) {
 
-    document.documentElement.requestFullscreen();
+    player.requestFullscreen().catch(()=>{});
 
     if (screen.orientation && screen.orientation.lock) {
       screen.orientation.lock("landscape").catch(()=>{});
@@ -219,3 +239,34 @@ document.getElementById("fullscreenBtn").onclick = () => {
     }
   }
 };
+
+// ===============================
+//  TOGGLE PROGRAMACIÓN
+// ===============================
+document.getElementById("toggleEPG").onclick = () => {
+
+  if (canalActual === null) return;
+
+  epgVisible = !epgVisible;
+
+  if (epgVisible) {
+    mostrarEPGCompleto();
+  } else {
+    document.getElementById("programacion").innerHTML = "";
+  }
+};
+
+// ===============================
+function mostrarEPGCompleto() {
+
+  const cont = document.getElementById("programacion");
+  const canal = canales[canalActual];
+
+  let html = `<div style="font-size:18px;">Programación completa</div><hr>`;
+
+  canal.programas.forEach((p, i) => {
+    html += `<div>${i + 1}. ${p.titulo}</div>`;
+  });
+
+  cont.innerHTML = html;
+}
