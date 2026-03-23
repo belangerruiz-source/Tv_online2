@@ -1,15 +1,12 @@
 // ===============================
-// VARIABLES
-// ===============================
 let canales = [];
 let canalActual = 0;
-let indiceVideo = 0;
-let inicioVideo = 0;
-let duracionActual = 0;
+
+//  memoria por canal
+let estadoCanales = {};
+
 let intervalo = null;
 
-// ===============================
-// INICIO
 // ===============================
 fetch("canales.json")
   .then(res => res.json())
@@ -24,164 +21,190 @@ fetch("canales.json")
   });
 
 // ===============================
-// INICIAR CANAL
-// ===============================
 function iniciarCanal() {
-  indiceVideo = 0;
-  reproducir();
-  mostrarProgramacion();
-}
 
-// ===============================
-// REPRODUCIR VIDEO
-// ===============================
-function reproducir() {
-
-  const canal = canales[canalActual];
-  const video = canal.programas[indiceVideo];
-
-  if (!video) return;
-
-  inicioVideo = Date.now();
-  duracionActual = video.duracion || 1800;
-
-  document.getElementById("player").innerHTML = `
-    <iframe 
-      width="100%" 
-      height="100%" 
-      src="https://www.youtube.com/embed/${video.id}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0"
-      frameborder="0"
-      allow="autoplay"
-      allowfullscreen>
-    </iframe>
-  `;
-
-  // actualizar progreso
-  clearInterval(intervalo);
-  intervalo = setInterval(actualizarProgreso, 1000);
-
-  // cambio automático
-  setTimeout(() => {
-    siguienteVideo();
-  }, duracionActual * 1000);
-}
-
-// ===============================
-// SIGUIENTE VIDEO
-// ===============================
-function siguienteVideo() {
-  const canal = canales[canalActual];
-
-  indiceVideo++;
-
-  if (indiceVideo >= canal.programas.length) {
-    indiceVideo = 0;
+  if (!estadoCanales[canalActual]) {
+    estadoCanales[canalActual] = {
+      indice: 0,
+      tiempo: 0,
+      inicio: Date.now()
+    };
   }
 
   reproducir();
-  mostrarProgramacion();
+  mostrarInfo();
 }
 
 // ===============================
-// PROGRESO
+function reproducir(delay = 0) {
+
+  const canal = canales[canalActual];
+  const estado = estadoCanales[canalActual];
+
+  const prog = canal.programas[estado.indice];
+
+  let start = estado.tiempo;
+
+  setTimeout(() => {
+
+    document.getElementById("player").innerHTML = `
+      <iframe 
+        width="100%" 
+        height="100%" 
+        src="https://www.youtube.com/embed/${prog.id}?autoplay=1&start=${start}&mute=1&controls=0&modestbranding=1&rel=0"
+        frameborder="0"
+        allow="autoplay"
+        allowfullscreen>
+      </iframe>
+    `;
+
+    estado.inicio = Date.now();
+
+    iniciarProgreso();
+
+  }, delay);
+}
+
 // ===============================
-function actualizarProgreso() {
+function iniciarProgreso() {
+
+  clearInterval(intervalo);
+
+  intervalo = setInterval(() => {
+
+    const estado = estadoCanales[canalActual];
+    const canal = canales[canalActual];
+    const prog = canal.programas[estado.indice];
+
+    let transcurrido = Math.floor((Date.now() - estado.inicio) / 1000);
+
+    let tiempoActual = estado.tiempo + transcurrido;
+    let total = prog.duracion || 1800;
+
+    if (tiempoActual >= total) {
+      siguienteVideo();
+      return;
+    }
+
+    actualizarUI(tiempoActual, total, prog);
+
+  }, 1000);
+}
+
+// ===============================
+function siguienteVideo() {
+
+  const estado = estadoCanales[canalActual];
+  const canal = canales[canalActual];
+
+  estado.indice++;
+  estado.tiempo = 0;
+
+  if (estado.indice >= canal.programas.length) {
+    estado.indice = 0;
+  }
+
+  reproducir();
+}
+
+// ===============================
+function actualizarUI(actual, total, prog) {
 
   const cont = document.getElementById("programacion");
 
-  if (!cont) return;
-
-  const transcurrido = Math.floor((Date.now() - inicioVideo) / 1000);
-
-  const actual = formatearTiempo(transcurrido);
-  const total = formatearTiempo(duracionActual);
-
-  const prog = canales[canalActual].programas[indiceVideo];
+  let porcentaje = (actual / total) * 100;
 
   cont.innerHTML = `
     <div style="font-size:22px; color:#00ffcc;">
        ${prog.titulo}
     </div>
 
-    <div style="font-size:16px; color:#aaa;">
+    <div style="color:#aaa;">
       ${prog.descripcion || ""}
     </div>
 
     <div style="margin-top:10px;">
-      ${actual} / ${total}
+      ${formatear(actual)} / ${formatear(total)}
     </div>
 
-    <hr style="margin:10px 0;">
-
-    <div style="font-size:18px;">Siguiente:</div>
+    <div style="width:100%; height:6px; background:#333; margin-top:8px;">
+      <div style="width:${porcentaje}%; height:100%; background:#00ffcc;"></div>
+    </div>
   `;
-
-  // siguientes programas
-  const canal = canales[canalActual];
-
-  for (let i = 1; i <= 5; i++) {
-    let next = canal.programas[(indiceVideo + i) % canal.programas.length];
-
-    cont.innerHTML += `
-      <div style="font-size:16px;">
-        • ${next.titulo}
-      </div>
-    `;
-  }
 }
 
 // ===============================
-// FORMATO TIEMPO
-// ===============================
-function formatearTiempo(seg) {
+function formatear(seg) {
   let m = Math.floor(seg / 60);
   let s = seg % 60;
-
   return `${m}:${s.toString().padStart(2,"0")}`;
 }
 
 // ===============================
-// CREAR CANALES
-// ===============================
 function crearCanales() {
+
   const cont = document.getElementById("canales");
   cont.innerHTML = "";
 
   canales.forEach((c, i) => {
 
-    const div = document.createElement("div");
+    let div = document.createElement("div");
     div.className = "canal";
     div.innerText = (i + 1) + ". " + c.nombre;
 
-    div.onclick = () => {
-      canalActual = i;
-      localStorage.setItem("canal", canalActual);
-
-      iniciarCanal();
-    };
+    div.onclick = () => cambiarCanal(i);
 
     cont.appendChild(div);
   });
 }
 
 // ===============================
-// CONTROLES TECLADO
-// ===============================
-document.addEventListener("keydown", (e) => {
+function cambiarCanal(nuevo) {
 
-  if (e.key === "ArrowUp") cambiarCanal(-1);
-  if (e.key === "ArrowDown") cambiarCanal(1);
-  if (e.key === "Enter") siguienteVideo();
-});
+  guardarEstado();
 
-// ===============================
-function cambiarCanal(dir) {
-  canalActual += dir;
-
-  if (canalActual < 0) canalActual = canales.length - 1;
-  if (canalActual >= canales.length) canalActual = 0;
-
+  canalActual = nuevo;
   localStorage.setItem("canal", canalActual);
 
   iniciarCanal();
+
+  //  delay de 2 segundos al volver
+  reproducir(2000);
 }
+
+// ===============================
+function guardarEstado() {
+
+  const estado = estadoCanales[canalActual];
+
+  if (!estado) return;
+
+  let transcurrido = Math.floor((Date.now() - estado.inicio) / 1000);
+  estado.tiempo += transcurrido;
+}
+
+// ===============================
+// TECLADO
+// ===============================
+document.addEventListener("keydown", (e) => {
+
+  if (e.key === "ArrowUp") cambiarCanal((canalActual - 1 + canales.length) % canales.length);
+  if (e.key === "ArrowDown") cambiarCanal((canalActual + 1) % canales.length);
+});
+
+// ===============================
+// FULLSCREEN + ROTACIÓN
+// ===============================
+document.getElementById("fullscreenBtn").onclick = () => {
+
+  let elem = document.documentElement;
+
+  if (elem.requestFullscreen) {
+    elem.requestFullscreen();
+  }
+
+  // intento de orientación horizontal
+  if (screen.orientation && screen.orientation.lock) {
+    screen.orientation.lock("landscape").catch(()=>{});
+  }
+};
