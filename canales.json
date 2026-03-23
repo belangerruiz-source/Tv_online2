@@ -2,638 +2,96 @@
   {
     "nombre": "UNIVERSO",
     "programas": [
-      {
-        "id": "Yw7q6xHneN0",
-        "titulo": "Existe Una Tierra La",
-        "descripcion": "Explorando existe y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "11hpS7F0YuI",
-        "titulo": "Oculto En El Universo",
-        "descripcion": "Explorando oculto y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "cMhL_FzEiHI",
-        "titulo": "Lo Que La Voyager",
-        "descripcion": "Explorando lo y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "6ZcF7hklYQg",
-        "titulo": "Explorando El Sistema Solar",
-        "descripcion": "Explorando explorando y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "aqxpcRod_9k",
-        "titulo": "Cómo Es Realmente La",
-        "descripcion": "Explorando cómo y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "loz_i80X7ug",
-        "titulo": "Por Qué Marte Es",
-        "descripcion": "Explorando por y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "hQj_MwShpPA",
-        "titulo": "Nueva Historia De Nuestro",
-        "descripcion": "Explorando nueva y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "EgaG_aKBSno",
-        "titulo": "Por Qué Los Científicos",
-        "descripcion": "Explorando por y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "_oLOwQp0mZQ",
-        "titulo": "Nos Equivocamos Con Urano",
-        "descripcion": "Explorando nos y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "nzICDsGjAEA",
-        "titulo": "Salvación Fuera De La",
-        "descripcion": "Explorando salvación y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "6fELDNXn3ZY",
-        "titulo": "Secretos Del Universo Hacia",
-        "descripcion": "Explorando secretos y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "BetugSSWbf4",
-        "titulo": "Nacimiento Del Planeta Tierra",
-        "descripcion": "Explorando nacimiento y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "Lb6j5Y9s1I0",
-        "titulo": "El Universo Y Sus",
-        "descripcion": "Explorando el y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "ZYxp5tNDu_s",
-        "titulo": "Inteligencia Extraterrestre Qué Sabían",
-        "descripcion": "Explorando inteligencia y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "p_FRc98Nf2k",
-        "titulo": "De Mercurio A Marte",
-        "descripcion": "Explorando de y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "F7oc_5DFymM",
-        "titulo": "Viaje A Los Planetas",
-        "descripcion": "Explorando viaje y sus aspectos más relevantes.",
-        "duracion": 1800
-      }
+      { "id": "Yw7q6xHneN0", "titulo": "Nueva Tierra Posible", "descripcion": "Exploración de planetas similares a la Tierra.", "duracion": 1800 },
+      { "id": "11hpS7F0YuI", "titulo": "Universo Oculto", "descripcion": "Misterios invisibles del cosmos profundo.", "duracion": 1800 },
+      { "id": "cMhL_FzEiHI", "titulo": "Mensajes De Voyager", "descripcion": "Lo que revelan las sondas espaciales.", "duracion": 1800 },
+      { "id": "6ZcF7hklYQg", "titulo": "Sistema Solar", "descripcion": "Recorrido por planetas y sus secretos.", "duracion": 1800 },
+      { "id": "aqxpcRod_9k", "titulo": "La Vía Láctea", "descripcion": "Estructura y misterios de nuestra galaxia.", "duracion": 1800 },
+      { "id": "loz_i80X7ug", "titulo": "Misterios De Marte", "descripcion": "El planeta rojo y sus enigmas.", "duracion": 1800 },
+      { "id": "hQj_MwShpPA", "titulo": "Historia Del Universo", "descripcion": "Evolución del cosmos a través del tiempo.", "duracion": 1800 },
+      { "id": "EgaG_aKBSno", "titulo": "Ciencia Del Cosmos", "descripcion": "Descubrimientos científicos del universo.", "duracion": 1800 },
+      { "id": "_oLOwQp0mZQ", "titulo": "Errores Sobre Urano", "descripcion": "Lo que no sabíamos de este planeta.", "duracion": 1800 },
+      { "id": "nzICDsGjAEA", "titulo": "Vida Fuera De La Tierra", "descripcion": "Posibilidades de vida en el espacio.", "duracion": 1800 },
+      { "id": "6fELDNXn3ZY", "titulo": "Secretos Del Universo", "descripcion": "Fenómenos aún sin explicación.", "duracion": 1800 },
+      { "id": "BetugSSWbf4", "titulo": "Nacimiento De La Tierra", "descripcion": "Cómo se formó nuestro planeta.", "duracion": 1800 },
+      { "id": "Lb6j5Y9s1I0", "titulo": "Estructura Del Universo", "descripcion": "Cómo está organizado el cosmos.", "duracion": 1800 },
+      { "id": "ZYxp5tNDu_s", "titulo": "Vida Extraterrestre", "descripcion": "Lo que sabemos sobre otras civilizaciones.", "duracion": 1800 },
+      { "id": "p_FRc98Nf2k", "titulo": "De Mercurio A Marte", "descripcion": "Exploración de planetas cercanos.", "duracion": 1800 },
+      { "id": "F7oc_5DFymM", "titulo": "Viaje Por El Sistema Solar", "descripcion": "Recorrido por los planetas.", "duracion": 1800 }
     ]
   },
   {
     "nombre": "PROCESOS",
     "programas": [
-      {
-        "id": "M8jQ_KtY8yg",
-        "titulo": "Cómo Se Hace El",
-        "descripcion": "Explorando cómo y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "ey7CTWLdWD8",
-        "titulo": "Cómo Se Produce El",
-        "descripcion": "Explorando cómo y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "_AbvDav2P08",
-        "titulo": "Autos Solares Ingeniería Del",
-        "descripcion": "Explorando autos y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "IU0Ifj_Zhos",
-        "titulo": "Los Mejores Vídeos De",
-        "descripcion": "Explorando los y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "Q2WGZRAMz1k",
-        "titulo": "Mindblowing Machines Operating At",
-        "descripcion": "Explorando mindblowing y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "dS5ugRjyS14",
-        "titulo": "Como Es El Avión",
-        "descripcion": "Explorando como y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "OwazrBjVoz4",
-        "titulo": "Como Se Fabrica El",
-        "descripcion": "Explorando como y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "xjTPc3DHBS4",
-        "titulo": "Como Se Construye Un",
-        "descripcion": "Explorando como y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "3g8BwBuZqs4",
-        "titulo": "Como Se Hacen Las",
-        "descripcion": "Explorando como y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "6N59tdmk1CU",
-        "titulo": "Como Se Hace El",
-        "descripcion": "Explorando como y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "URBGIJhNzRE",
-        "titulo": "Como Se Hacen Los",
-        "descripcion": "Explorando como y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "SGxcKUHC8XY",
-        "titulo": "Como Se Extrae El",
-        "descripcion": "Explorando como y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "NuRW61c-EHo",
-        "titulo": "Como Se Hace La",
-        "descripcion": "Explorando como y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "aHsc1kXrYdU",
-        "titulo": "Como Una Granja Avícola",
-        "descripcion": "Explorando como y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "RFmtQpMv2ks",
-        "titulo": "Como Se Hace La",
-        "descripcion": "Explorando como y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "yuNDOPOmRL0",
-        "titulo": "Como Se Fabrican Las",
-        "descripcion": "Explorando como y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "HAZ7gm3m3j8",
-        "titulo": "Como Se Producen Los",
-        "descripcion": "Explorando como y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "wbMLjuxKsbY",
-        "titulo": "Como Se Hacen Los",
-        "descripcion": "Explorando como y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "HnmwWacoeUs",
-        "titulo": "Como Se Hacen Las",
-        "descripcion": "Explorando como y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "MWmIPGjySFw",
-        "titulo": "Como Se Hace El",
-        "descripcion": "Explorando como y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "rB1yd3cYai8",
-        "titulo": "Como Se Hace El",
-        "descripcion": "Explorando como y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "8xH0zyXtBoU",
-        "titulo": "Cómo Funciona La Refinación",
-        "descripcion": "Explorando cómo y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "4DvBV8MCZq0",
-        "titulo": "Así Se Fabrican Los",
-        "descripcion": "Explorando así y sus aspectos más relevantes.",
-        "duracion": 1800
-      }
+      { "id": "M8jQ_KtY8yg", "titulo": "Fabricación Industrial", "descripcion": "Cómo se producen objetos a gran escala.", "duracion": 1800 },
+      { "id": "ey7CTWLdWD8", "titulo": "Producción Moderna", "descripcion": "Procesos actuales de manufactura.", "duracion": 1800 },
+      { "id": "_AbvDav2P08", "titulo": "Autos Solares", "descripcion": "Tecnología de vehículos con energía solar.", "duracion": 1800 },
+      { "id": "IU0Ifj_Zhos", "titulo": "Mega Máquinas", "descripcion": "Equipos industriales en acción.", "duracion": 1800 },
+      { "id": "Q2WGZRAMz1k", "titulo": "Máquinas Sorprendentes", "descripcion": "Tecnología avanzada en operación.", "duracion": 1800 },
+      { "id": "dS5ugRjyS14", "titulo": "Ingeniería Aeronáutica", "descripcion": "Cómo funcionan los aviones modernos.", "duracion": 1800 },
+      { "id": "OwazrBjVoz4", "titulo": "Fabricación De Acero", "descripcion": "Proceso de producción del acero.", "duracion": 1800 },
+      { "id": "xjTPc3DHBS4", "titulo": "Construcción Moderna", "descripcion": "Cómo se levantan grandes estructuras.", "duracion": 1800 },
+      { "id": "3g8BwBuZqs4", "titulo": "Producción De Alimentos", "descripcion": "Cómo se elaboran productos alimenticios.", "duracion": 1800 },
+      { "id": "6N59tdmk1CU", "titulo": "Industria Alimentaria", "descripcion": "Procesos de fabricación de comida.", "duracion": 1800 },
+      { "id": "URBGIJhNzRE", "titulo": "Producción En Masa", "descripcion": "Fabricación en grandes cantidades.", "duracion": 1800 },
+      { "id": "SGxcKUHC8XY", "titulo": "Extracción De Recursos", "descripcion": "Cómo se obtienen materiales naturales.", "duracion": 1800 },
+      { "id": "NuRW61c-EHo", "titulo": "Producción De Energía", "descripcion": "Cómo se genera electricidad.", "duracion": 1800 },
+      { "id": "aHsc1kXrYdU", "titulo": "Granjas Modernas", "descripcion": "Tecnología en producción agrícola.", "duracion": 1800 },
+      { "id": "RFmtQpMv2ks", "titulo": "Procesos Industriales", "descripcion": "Transformación de materias primas.", "duracion": 1800 },
+      { "id": "yuNDOPOmRL0", "titulo": "Fabricación De Herramientas", "descripcion": "Cómo se crean herramientas modernas.", "duracion": 1800 },
+      { "id": "HAZ7gm3m3j8", "titulo": "Producción Tecnológica", "descripcion": "Fabricación de dispositivos electrónicos.", "duracion": 1800 },
+      { "id": "wbMLjuxKsbY", "titulo": "Industria Pesada", "descripcion": "Procesos industriales a gran escala.", "duracion": 1800 },
+      { "id": "HnmwWacoeUs", "titulo": "Fabricación De Ropa", "descripcion": "Cómo se producen prendas textiles.", "duracion": 1800 },
+      { "id": "MWmIPGjySFw", "titulo": "Producción De Vidrio", "descripcion": "Proceso de fabricación del vidrio.", "duracion": 1800 },
+      { "id": "rB1yd3cYai8", "titulo": "Producción De Papel", "descripcion": "Cómo se fabrica el papel.", "duracion": 1800 },
+      { "id": "8xH0zyXtBoU", "titulo": "Refinación De Petróleo", "descripcion": "Proceso de transformación del crudo.", "duracion": 1800 },
+      { "id": "4DvBV8MCZq0", "titulo": "Fabricación Automotriz", "descripcion": "Cómo se ensamblan los vehículos.", "duracion": 1800 }
     ]
   },
   {
     "nombre": "DOCUMENTALES",
     "programas": [
-      {
-        "id": "hQj_MwShpPA",
-        "titulo": "Nueva Historia De Nuestro",
-        "descripcion": "Explorando nueva y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "PmnpDt9Ne4Q",
-        "titulo": "El Fin De Mesopotamia",
-        "descripcion": "Explorando el y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "46IkWDtKXC8",
-        "titulo": "China No Parece Real",
-        "descripcion": "Explorando china y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "KqQKIccOX7Q",
-        "titulo": "El Regreso Del Frío",
-        "descripcion": "Explorando el y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "_AbvDav2P08",
-        "titulo": "Autos Solares Ingeniería Del",
-        "descripcion": "Explorando autos y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "KAplUE6l_-Q",
-        "titulo": "Qué Pasaría Si A",
-        "descripcion": "Explorando qué y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "j53BXK1FiUA",
-        "titulo": "Los Secretos De Los",
-        "descripcion": "Explorando los y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "oyQQm-42BG4",
-        "titulo": "La Tierra En La",
-        "descripcion": "Explorando la y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "5unv1T0nJL4",
-        "titulo": "Zanzíbar Cambios Y Conflictos",
-        "descripcion": "Explorando zanzíbar y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "auEcfQqkguE",
-        "titulo": "Las Profundidades De Nueva",
-        "descripcion": "Explorando las y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "nnwQyiMayZ4",
-        "titulo": "Avances Científicos Y Tecnológicos",
-        "descripcion": "Explorando avances y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "hPKVK7lXzJw",
-        "titulo": "Ingeniería Del Futuro Energías",
-        "descripcion": "Explorando ingeniería y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "hxVfrYNVO8A",
-        "titulo": "China La Vida De",
-        "descripcion": "Explorando china y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "RJe4CcO6gVY",
-        "titulo": "Nuestra Propia Estrella En",
-        "descripcion": "Explorando nuestra y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "zup98ZENwCA",
-        "titulo": "La Tierra Era Terrible",
-        "descripcion": "Explorando la y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "7-1WWG9e7NU",
-        "titulo": "La Extinción De Los",
-        "descripcion": "Explorando la y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "FmWT7h9O320",
-        "titulo": "Dc El Peor Año",
-        "descripcion": "Explorando dc y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "hZsqDW2qbsU",
-        "titulo": "La Ridícula Ingeniería De",
-        "descripcion": "Explorando la y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "o3PrRqJwa7k",
-        "titulo": "Qué Distingue A Los",
-        "descripcion": "Explorando qué y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "jDvdnwUvspY",
-        "titulo": "",
-        "descripcion": "Programa informativo",
-        "duracion": 1800
-      },
-      {
-        "id": "b6N8DGSrh6o",
-        "titulo": "Sotto Lantartide Il Continente",
-        "descripcion": "Explorando sotto y sus aspectos más relevantes.",
-        "duracion": 1800
-      }
+      { "id": "PmnpDt9Ne4Q", "titulo": "Fin De Mesopotamia", "descripcion": "El declive de una gran civilización.", "duracion": 1800 },
+      { "id": "46IkWDtKXC8", "titulo": "China Increíble", "descripcion": "Aspectos sorprendentes del país asiático.", "duracion": 1800 },
+      { "id": "KqQKIccOX7Q", "titulo": "Regreso Del Frío", "descripcion": "Cambios climáticos extremos.", "duracion": 1800 },
+      { "id": "KAplUE6l_-Q", "titulo": "Escenarios Del Futuro", "descripcion": "Qué podría pasar en el mundo.", "duracion": 1800 },
+      { "id": "j53BXK1FiUA", "titulo": "Secretos Ocultos", "descripcion": "Descubrimientos desconocidos.", "duracion": 1800 },
+      { "id": "oyQQm-42BG4", "titulo": "Historia De La Tierra", "descripcion": "Evolución del planeta.", "duracion": 1800 },
+      { "id": "5unv1T0nJL4", "titulo": "Zanzíbar En Conflicto", "descripcion": "Cambios sociales y políticos.", "duracion": 1800 },
+      { "id": "nnwQyiMayZ4", "titulo": "Avances Científicos", "descripcion": "Innovaciones recientes.", "duracion": 1800 },
+      { "id": "hPKVK7lXzJw", "titulo": "Energía Del Futuro", "descripcion": "Nuevas fuentes energéticas.", "duracion": 1800 },
+      { "id": "hxVfrYNVO8A", "titulo": "Vida En China", "descripcion": "Cultura y sociedad actual.", "duracion": 1800 },
+      { "id": "RJe4CcO6gVY", "titulo": "Nuestra Estrella", "descripcion": "El Sol y su importancia.", "duracion": 1800 },
+      { "id": "zup98ZENwCA", "titulo": "Tierra Primitiva", "descripcion": "Cómo era el planeta en sus inicios.", "duracion": 1800 },
+      { "id": "7-1WWG9e7NU", "titulo": "Extinción Masiva", "descripcion": "Eventos que cambiaron la vida.", "duracion": 1800 },
+      { "id": "FmWT7h9O320", "titulo": "Año Más Difícil", "descripcion": "Eventos históricos complejos.", "duracion": 1800 },
+      { "id": "o3PrRqJwa7k", "titulo": "Diferencias Humanas", "descripcion": "Qué nos hace únicos.", "duracion": 1800 }
     ]
   },
   {
     "nombre": "HISTORIA",
     "programas": [
-      {
-        "id": "aDcKkboqLKw",
-        "titulo": "Titanes De La Televisión",
-        "descripcion": "Explorando titanes y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "n1JXIUsGZR8",
-        "titulo": "El Hundimiento Del Titanic",
-        "descripcion": "Explorando el y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "4dKumyZhw24",
-        "titulo": "Los Viajeros Del Tiempo",
-        "descripcion": "Explorando los y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "3NHTxhj0-4o",
-        "titulo": "Templarios En América Episodio",
-        "descripcion": "Explorando templarios y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "VzgBpxyzQN0",
-        "titulo": "Los Mayas Secretos Ocultos",
-        "descripcion": "Explorando los y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "sPUWMb_HhMU",
-        "titulo": "El Imperio Chino Un",
-        "descripcion": "Explorando el y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "3lPD7QmeWrY",
-        "titulo": "El Mundo De Mil",
-        "descripcion": "Explorando el y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "__q4vZfHRR0",
-        "titulo": "Misterios Arqueológicos Que La",
-        "descripcion": "Explorando misterios y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "iL0X_sONAso",
-        "titulo": "Prediciendo El Futuro El",
-        "descripcion": "Explorando prediciendo y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "s711uFfWXug",
-        "titulo": "Israel Y Palestina Misterios",
-        "descripcion": "Explorando israel y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "NIIKCCMJY_Q",
-        "titulo": "Las Trece Colonias El",
-        "descripcion": "Explorando las y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "ui3n5jDnZo8",
-        "titulo": "El Estado Más Feliz",
-        "descripcion": "Explorando el y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "7zvvkDk86vA",
-        "titulo": "Motorola Att Y Nokia",
-        "descripcion": "Explorando motorola y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "DlpFBqQ614I",
-        "titulo": "Coca Cola El Mejor",
-        "descripcion": "Explorando coca y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "sDesEbrZHNQ",
-        "titulo": "Aquí Comenzó Todo La",
-        "descripcion": "Explorando aquí y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "xoWIm0UJ3iE",
-        "titulo": "Las Trece Colonias Y",
-        "descripcion": "Explorando las y sus aspectos más relevantes.",
-        "duracion": 1800
-      }
+      { "id": "n1JXIUsGZR8", "titulo": "Hundimiento Del Titanic", "descripcion": "El desastre marítimo más famoso.", "duracion": 1800 },
+      { "id": "3NHTxhj0-4o", "titulo": "Templarios En América", "descripcion": "Misterios de los caballeros templarios.", "duracion": 1800 },
+      { "id": "VzgBpxyzQN0", "titulo": "Secretos Mayas", "descripcion": "La civilización maya y sus enigmas.", "duracion": 1800 },
+      { "id": "sPUWMb_HhMU", "titulo": "Imperio Chino", "descripcion": "Historia de una gran potencia.", "duracion": 1800 },
+      { "id": "s711uFfWXug", "titulo": "Israel Y Palestina", "descripcion": "Conflicto histórico en Medio Oriente.", "duracion": 1800 },
+      { "id": "NIIKCCMJY_Q", "titulo": "Las Trece Colonias", "descripcion": "Origen de Estados Unidos.", "duracion": 1800 },
+      { "id": "DlpFBqQ614I", "titulo": "Historia De Coca Cola", "descripcion": "El crecimiento de una marca global.", "duracion": 1800 }
     ]
   },
   {
     "nombre": "CIUDADES",
     "programas": [
-      {
-        "id": "ui3n5jDnZo8",
-        "titulo": "El Estado Más Feliz",
-        "descripcion": "Explorando el y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "1Np-Ea6XCgc",
-        "titulo": "Vivir En Oklahoma Tulsa",
-        "descripcion": "Explorando vivir y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "VkIuG4AYTp0",
-        "titulo": "Missouri El El Corazón",
-        "descripcion": "Explorando missouri y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "hSFXBPXfQiM",
-        "titulo": "Utah El Mejor Estado",
-        "descripcion": "Explorando utah y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "-DpqdnF0pmM",
-        "titulo": "Virginia El Donde Nació",
-        "descripcion": "Explorando virginia y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "oAPyEw1m2EA",
-        "titulo": "Canadá El Mejor Lugar",
-        "descripcion": "Explorando canadá y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "aDsYL_oVDy0",
-        "titulo": "Suiza Alpes Lagos Y",
-        "descripcion": "Explorando suiza y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "WudZWY_td4U",
-        "titulo": "Tokio Una Ciudad Que",
-        "descripcion": "Explorando tokio y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "3Ul2zh5zxt8",
-        "titulo": "Pennsylvania Más Allá De",
-        "descripcion": "Explorando pennsylvania y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "4HuGR0-wJv8",
-        "titulo": "Maravillas De Inglaterra Los",
-        "descripcion": "Explorando maravillas y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "di9aGi4OLqI",
-        "titulo": "La Escocia Auténtica El",
-        "descripcion": "Explorando la y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "iDtEPsKKEbQ",
-        "titulo": "Así Es Vivir En",
-        "descripcion": "Explorando así y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "rA-7v3sFH4w",
-        "titulo": "Nicaragua Y Datos De",
-        "descripcion": "Explorando nicaragua y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "Zz1oyKBW5zg",
-        "titulo": "Londres En Cómo Es",
-        "descripcion": "Explorando londres y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "HRg1gJi6yqc",
-        "titulo": "Sydney Australia Walking Tour",
-        "descripcion": "Explorando sydney y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "6cTrb1Uml3w",
-        "titulo": "Alemania Asi Es Alemania",
-        "descripcion": "Explorando alemania y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "z279utUPq9Q",
-        "titulo": "Los Pueblos Más Bellos",
-        "descripcion": "Explorando los y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "lj-qJAh84tA",
-        "titulo": "Montana El Lugar Más",
-        "descripcion": "Explorando montana y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "Fs14xCRfGsg",
-        "titulo": "Massachusetts El La Encantadora",
-        "descripcion": "Explorando massachusetts y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "RWg9OtH7og4",
-        "titulo": "Maravillas De Irlanda Los",
-        "descripcion": "Explorando maravillas y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "HOqe1tlmRkU",
-        "titulo": "Maravillas De Los Países",
-        "descripcion": "Explorando maravillas y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "6v405pzYZMI",
-        "titulo": "Ciudades De Europa Que",
-        "descripcion": "Explorando ciudades y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "jUD_bgHp4jc",
-        "titulo": "Las Ciudades Más Bonitas",
-        "descripcion": "Explorando las y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "LrV0ffEfFQk",
-        "titulo": "Chicago Usa La Ciudad",
-        "descripcion": "Explorando chicago y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "UpAl8lW61gI",
-        "titulo": "Las Ciudades Más Avanzadas",
-        "descripcion": "Explorando las y sus aspectos más relevantes.",
-        "duracion": 1800
-      },
-      {
-        "id": "_XTf8u2aa2U",
-        "titulo": "New Jersey El Mejor",
-        "descripcion": "Explorando new y sus aspectos más relevantes.",
-        "duracion": 1800
-      }
+      { "id": "1Np-Ea6XCgc", "titulo": "Vivir En Oklahoma", "descripcion": "Cómo es la vida en este estado.", "duracion": 1800 },
+      { "id": "oAPyEw1m2EA", "titulo": "Vivir En Canadá", "descripcion": "Calidad de vida en el país norteamericano.", "duracion": 1800 },
+      { "id": "aDsYL_oVDy0", "titulo": "Suiza Natural", "descripcion": "Paisajes y ciudades suizas.", "duracion": 1800 },
+      { "id": "WudZWY_td4U", "titulo": "Tokio Moderna", "descripcion": "Una ciudad futurista y vibrante.", "duracion": 1800 },
+      { "id": "di9aGi4OLqI", "titulo": "Escocia Auténtica", "descripcion": "Tradiciones y paisajes únicos.", "duracion": 1800 },
+      { "id": "rA-7v3sFH4w", "titulo": "Nicaragua Hoy", "descripcion": "Datos y realidad del país.", "duracion": 1800 },
+      { "id": "Zz1oyKBW5zg", "titulo": "Londres Actual", "descripcion": "Vida en la capital británica.", "duracion": 1800 },
+      { "id": "6cTrb1Uml3w", "titulo": "Alemania Moderna", "descripcion": "Cultura y desarrollo actual.", "duracion": 1800 },
+      { "id": "LrV0ffEfFQk", "titulo": "Chicago Urbana", "descripcion": "La vida en una gran ciudad.", "duracion": 1800 }
     ]
   }
 ]
