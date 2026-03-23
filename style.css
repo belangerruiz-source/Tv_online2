@@ -1,78 +1,156 @@
-body {
+/* ===============================
+   RESET GENERAL
+================================ */
+* {
   margin: 0;
-  background: black;
-  font-family: Arial, sans-serif;
+  padding: 0;
+  box-sizing: border-box;
   user-select: none;
   -webkit-user-select: none;
 }
 
-/* 📺 Player */
-#player {
-  position: fixed;
-  top: 0;
-  left: 200px;
-  width: calc(100% - 200px);
-  height: 100vh;
+body {
+  background: #0b0b0b;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
 }
 
-#video {
-  width: 100%;
-  height: 100%;
-}
-
-/* 📡 Lista de canales */
+/* ===============================
+   LAYOUT PRINCIPAL
+================================ */
 #canales {
   position: fixed;
   left: 0;
   top: 0;
-  width: 200px;
+  width: 180px;
   height: 100vh;
-  background: #111;
   overflow-y: auto;
-  border-right: 2px solid #333;
-}
-
-/* 🎛️ Botones de canal */
-#canales div {
-  padding: 12px;
-  color: white;
-  border-bottom: 1px solid #333;
-}
-
-#canales div:hover {
-  background: #222;
-  cursor: pointer;
-}
-#guia {
-  height: 200px;
-  overflow-x: scroll;
-  white-space: nowrap;
   background: #111;
-}
-.guia-canal {
-  display: inline-block;
-  width: 250px;
-  margin-right: 10px;
+  padding-top: 10px;
+  border-right: 1px solid #222;
 }
 
-#fullscreenBtn, #restartBtn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  margin-left: 10px;
-  padding: 15px;
-  font-size: 20px;
-  background: rgba(0,0,0,0.7);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  z-index: 999;
-}
-
-#restartBtn {
-  right: 80px;
+#player {
+  position: absolute;
+  left: 180px;
+  top: 0;
+  width: calc(100% - 180px);
+  height: 70vh;
+  background: black;
 }
 
 #programacion {
+  position: absolute;
+  left: 180px;
+  bottom: 0;
+  width: calc(100% - 180px);
+  height: 30vh;
+  background: rgba(0,0,0,0.85);
+  padding: 15px;
+  overflow-y: auto;
   transition: opacity 0.5s;
+}
+
+/* ===============================
+   CANALES
+================================ */
+.canal {
+  padding: 15px 10px;
+  border-bottom: 1px solid #222;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.canal:hover {
+  background: #1a1a1a;
+}
+
+.canal:active {
+  background: #00ffcc;
+  color: #000;
+}
+
+/* ===============================
+   CONTROLES (BOTONES)
+================================ */
+#controls {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 12px;
+  z-index: 999;
+}
+
+.control-btn {
+  width: 60px;
+  height: 60px;
+  font-size: 22px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+.control-btn:active {
+  transform: scale(0.95);
+}
+
+/* ===============================
+   BOTÓN PROGRAMACIÓN
+================================ */
+#toggleEPG {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  padding: 12px 18px;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  border-radius: 10px;
+  font-size: 14px;
+  border: none;
+}
+
+#toggleEPG:active {
+  transform: scale(0.95);
+}
+
+/* ===============================
+   TEXTO PROGRAMACIÓN
+================================ */
+#programacion div {
+  margin-bottom: 6px;
+}
+
+/* ===============================
+   SCROLL PERSONALIZADO
+================================ */
+#canales::-webkit-scrollbar,
+#programacion::-webkit-scrollbar {
+  width: 6px;
+}
+
+#canales::-webkit-scrollbar-thumb,
+#programacion::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 5px;
+}
+
+/* ===============================
+   FULLSCREEN AJUSTES
+================================ */
+:fullscreen #canales {
+  display: none;
+}
+
+:fullscreen #programacion {
+  display: none;
+}
+
+:fullscreen #player {
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
