@@ -2,6 +2,8 @@ body {
   margin: 0;
   background: black;
   font-family: Arial, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 /* 📺 Player */
@@ -52,7 +54,25 @@ body {
   width: 250px;
   margin-right: 10px;
 }
-body {
-  user-select: none;
-  -webkit-user-select: none;
+
+#fullscreenBtn, #restartBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  margin-left: 10px;
+  padding: 15px;
+  font-size: 20px;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  z-index: 999;
+}
+
+#restartBtn {
+  right: 80px;
+}
+
+#programacion {
+  transition: opacity 0.5s;
 }
