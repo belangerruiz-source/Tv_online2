@@ -2,7 +2,7 @@
 let canales = [];
 let canalActual = 0;
 
-//  memoria por canal
+//  estado por canal
 let estadoCanales = {};
 
 let intervalo = null;
@@ -13,15 +13,12 @@ fetch("canales.json")
   .then(data => {
     canales = data;
 
-    const guardado = localStorage.getItem("canal");
-    if (guardado !== null) canalActual = parseInt(guardado);
-
     crearCanales();
-    iniciarCanal();
+    iniciarCanal(true); // inicia en mute
   });
 
 // ===============================
-function iniciarCanal() {
+function iniciarCanal(mute = true) {
 
   if (!estadoCanales[canalActual]) {
     estadoCanales[canalActual] = {
@@ -31,19 +28,17 @@ function iniciarCanal() {
     };
   }
 
-  reproducir();
-  mostrarInfo();
+  reproducir(mute);
 }
 
 // ===============================
-function reproducir(delay = 0) {
+function reproducir(mute = true, delay = 0) {
 
   const canal = canales[canalActual];
   const estado = estadoCanales[canalActual];
-
   const prog = canal.programas[estado.indice];
 
-  let start = estado.tiempo;
+  let start = Math.floor(estado.tiempo);
 
   setTimeout(() => {
 
@@ -51,7 +46,7 @@ function reproducir(delay = 0) {
       <iframe 
         width="100%" 
         height="100%" 
-        src="https://www.youtube.com/embed/${prog.id}?autoplay=1&start=${start}&mute=1&controls=0&modestbranding=1&rel=0"
+        src="https://www.youtube.com/embed/${prog.id}?autoplay=1&start=${start}&mute=${mute ? 1 : 0}&controls=0&modestbranding=1&rel=0"
         frameborder="0"
         allow="autoplay"
         allowfullscreen>
@@ -59,7 +54,6 @@ function reproducir(delay = 0) {
     `;
 
     estado.inicio = Date.now();
-
     iniciarProgreso();
 
   }, delay);
@@ -77,16 +71,13 @@ function iniciarProgreso() {
     const prog = canal.programas[estado.indice];
 
     let transcurrido = Math.floor((Date.now() - estado.inicio) / 1000);
-
-    let tiempoActual = estado.tiempo + transcurrido;
+    let actual = estado.tiempo + transcurrido;
     let total = prog.duracion || 1800;
 
-    if (tiempoActual >= total) {
+    if (actual >= total) {
       siguienteVideo();
       return;
     }
-
-    actualizarUI(tiempoActual, total, prog);
 
   }, 1000);
 }
@@ -104,40 +95,7 @@ function siguienteVideo() {
     estado.indice = 0;
   }
 
-  reproducir();
-}
-
-// ===============================
-function actualizarUI(actual, total, prog) {
-
-  const cont = document.getElementById("programacion");
-
-  let porcentaje = (actual / total) * 100;
-
-  cont.innerHTML = `
-    <div style="font-size:22px; color:#00ffcc;">
-       ${prog.titulo}
-    </div>
-
-    <div style="color:#aaa;">
-      ${prog.descripcion || ""}
-    </div>
-
-    <div style="margin-top:10px;">
-      ${formatear(actual)} / ${formatear(total)}
-    </div>
-
-    <div style="width:100%; height:6px; background:#333; margin-top:8px;">
-      <div style="width:${porcentaje}%; height:100%; background:#00ffcc;"></div>
-    </div>
-  `;
-}
-
-// ===============================
-function formatear(seg) {
-  let m = Math.floor(seg / 60);
-  let s = seg % 60;
-  return `${m}:${s.toString().padStart(2,"0")}`;
+  reproducir(false); // sigue sin mute después del primer click
 }
 
 // ===============================
@@ -164,12 +122,10 @@ function cambiarCanal(nuevo) {
   guardarEstado();
 
   canalActual = nuevo;
-  localStorage.setItem("canal", canalActual);
 
-  iniciarCanal();
-
-  //  delay de 2 segundos al volver
-  reproducir(2000);
+  //  delay natural de 2 segundos + sonido activado
+  iniciarCanal(false);
+  reproducir(false, 2000);
 }
 
 // ===============================
@@ -182,29 +138,3 @@ function guardarEstado() {
   let transcurrido = Math.floor((Date.now() - estado.inicio) / 1000);
   estado.tiempo += transcurrido;
 }
-
-// ===============================
-// TECLADO
-// ===============================
-document.addEventListener("keydown", (e) => {
-
-  if (e.key === "ArrowUp") cambiarCanal((canalActual - 1 + canales.length) % canales.length);
-  if (e.key === "ArrowDown") cambiarCanal((canalActual + 1) % canales.length);
-});
-
-// ===============================
-// FULLSCREEN + ROTACIÓN
-// ===============================
-document.getElementById("fullscreenBtn").onclick = () => {
-
-  let elem = document.documentElement;
-
-  if (elem.requestFullscreen) {
-    elem.requestFullscreen();
-  }
-
-  // intento de orientación horizontal
-  if (screen.orientation && screen.orientation.lock) {
-    screen.orientation.lock("landscape").catch(()=>{});
-  }
-};
