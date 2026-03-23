@@ -10,8 +10,18 @@ fetch("canales.json")
   .then(res => res.json())
   .then(data => {
     canales = data;
+
+    //  CARGAR PROGRESO GUARDADO
+    const guardado = localStorage.getItem("estadoTV");
+    if (guardado) estadoCanales = JSON.parse(guardado);
+
     crearCanales();
   });
+
+// ===============================
+function guardarTodo() {
+  localStorage.setItem("estadoTV", JSON.stringify(estadoCanales));
+}
 
 // ===============================
 function crearCanales() {
@@ -46,7 +56,7 @@ function seleccionarCanal(i) {
     };
   }
 
-  reproducir(false, 2000); //  sonido + delay
+  reproducir(false, 2000);
   mostrarProgramacion();
 }
 
@@ -73,6 +83,7 @@ function reproducir(mute = false, delay = 0) {
     `;
 
     estado.inicio = Date.now();
+
     iniciarProgreso();
 
   }, delay);
@@ -91,7 +102,7 @@ function iniciarProgreso() {
 
     let trans = Math.floor((Date.now() - estado.inicio) / 1000);
     let actual = estado.tiempo + trans;
-    let total = prog.duracion || 1800;
+    let total = prog.duracion; //  REAL
 
     if (actual >= total) {
       siguienteVideo();
@@ -116,6 +127,8 @@ function siguienteVideo() {
     estado.indice = 0;
   }
 
+  guardarTodo();
+
   reproducir(false);
   mostrarProgramacion();
 }
@@ -127,6 +140,8 @@ function guardarEstado() {
 
   let trans = Math.floor((Date.now() - estado.inicio) / 1000);
   estado.tiempo += trans;
+
+  guardarTodo();
 }
 
 // ===============================
@@ -138,7 +153,7 @@ function actualizarUI(actual, total, prog) {
 
   cont.innerHTML = `
     <div style="font-size:22px; color:#00ffcc;">
-       ${prog.titulo}
+      ${prog.titulo}
     </div>
 
     <div style="color:#aaa;">
@@ -159,14 +174,15 @@ function actualizarUI(actual, total, prog) {
   `;
 
   const canal = canales[canalActual];
+  const estado = estadoCanales[canalActual];
 
   for (let i = 1; i <= 5; i++) {
 
-    let next = canal.programas[(estadoCanales[canalActual].indice + i) % canal.programas.length];
+    let next = canal.programas[(estado.indice + i) % canal.programas.length];
 
     cont.innerHTML += `
       <div>
-        • ${next.titulo} (${formato(next.duracion || 1800)})
+        ${next.titulo} (${formato(next.duracion)})
       </div>
     `;
   }
@@ -174,10 +190,7 @@ function actualizarUI(actual, total, prog) {
 
 // ===============================
 function mostrarProgramacion() {
-
   if (canalActual === null) return;
-
-  actualizarUI(0, 1, { titulo: "Cargando...", descripcion: "" });
 }
 
 // ===============================
@@ -188,17 +201,28 @@ function formato(seg) {
 }
 
 // ===============================
-// FULLSCREEN + HORIZONTAL
+// FULLSCREEN TOGGLE REAL + ROTACIÓN
 // ===============================
+let fullscreen = false;
+
 document.getElementById("player").onclick = () => {
 
-  let elem = document.documentElement;
+  if (!fullscreen) {
+    document.documentElement.requestFullscreen();
 
-  if (elem.requestFullscreen) {
-    elem.requestFullscreen();
-  }
+    if (screen.orientation && screen.orientation.lock) {
+      screen.orientation.lock("landscape").catch(()=>{});
+    }
 
-  if (screen.orientation && screen.orientation.lock) {
-    screen.orientation.lock("landscape").catch(()=>{});
+    fullscreen = true;
+
+  } else {
+    document.exitFullscreen();
+
+    if (screen.orientation && screen.orientation.unlock) {
+      screen.orientation.unlock();
+    }
+
+    fullscreen = false;
   }
 };
