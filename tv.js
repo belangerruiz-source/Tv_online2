@@ -1,10 +1,8 @@
 // ===============================
 let canales = [];
-let canalActual = 0;
+let canalActual = null;
 
-//  estado por canal
 let estadoCanales = {};
-
 let intervalo = null;
 
 // ===============================
@@ -12,27 +10,48 @@ fetch("canales.json")
   .then(res => res.json())
   .then(data => {
     canales = data;
-
     crearCanales();
-    iniciarCanal(true); // inicia en mute
   });
 
 // ===============================
-function iniciarCanal(mute = true) {
+function crearCanales() {
 
-  if (!estadoCanales[canalActual]) {
-    estadoCanales[canalActual] = {
-      indice: 0,
-      tiempo: 0,
-      inicio: Date.now()
-    };
-  }
+  const cont = document.getElementById("canales");
+  cont.innerHTML = "";
 
-  reproducir(mute);
+  canales.forEach((c, i) => {
+
+    let div = document.createElement("div");
+    div.className = "canal";
+    div.innerText = (i + 1) + ". " + c.nombre;
+
+    div.onclick = () => seleccionarCanal(i);
+
+    cont.appendChild(div);
+  });
 }
 
 // ===============================
-function reproducir(mute = true, delay = 0) {
+function seleccionarCanal(i) {
+
+  if (canalActual !== null) guardarEstado();
+
+  canalActual = i;
+
+  if (!estadoCanales[i]) {
+    estadoCanales[i] = {
+      indice: 0,
+      tiempo: 0,
+      inicio: 0
+    };
+  }
+
+  reproducir(false, 2000); //  sonido + delay
+  mostrarProgramacion();
+}
+
+// ===============================
+function reproducir(mute = false, delay = 0) {
 
   const canal = canales[canalActual];
   const estado = estadoCanales[canalActual];
@@ -70,14 +89,16 @@ function iniciarProgreso() {
     const canal = canales[canalActual];
     const prog = canal.programas[estado.indice];
 
-    let transcurrido = Math.floor((Date.now() - estado.inicio) / 1000);
-    let actual = estado.tiempo + transcurrido;
+    let trans = Math.floor((Date.now() - estado.inicio) / 1000);
+    let actual = estado.tiempo + trans;
     let total = prog.duracion || 1800;
 
     if (actual >= total) {
       siguienteVideo();
       return;
     }
+
+    actualizarUI(actual, total, prog);
 
   }, 1000);
 }
@@ -95,37 +116,8 @@ function siguienteVideo() {
     estado.indice = 0;
   }
 
-  reproducir(false); // sigue sin mute después del primer click
-}
-
-// ===============================
-function crearCanales() {
-
-  const cont = document.getElementById("canales");
-  cont.innerHTML = "";
-
-  canales.forEach((c, i) => {
-
-    let div = document.createElement("div");
-    div.className = "canal";
-    div.innerText = (i + 1) + ". " + c.nombre;
-
-    div.onclick = () => cambiarCanal(i);
-
-    cont.appendChild(div);
-  });
-}
-
-// ===============================
-function cambiarCanal(nuevo) {
-
-  guardarEstado();
-
-  canalActual = nuevo;
-
-  //  delay natural de 2 segundos + sonido activado
-  iniciarCanal(false);
-  reproducir(false, 2000);
+  reproducir(false);
+  mostrarProgramacion();
 }
 
 // ===============================
@@ -133,8 +125,80 @@ function guardarEstado() {
 
   const estado = estadoCanales[canalActual];
 
-  if (!estado) return;
-
-  let transcurrido = Math.floor((Date.now() - estado.inicio) / 1000);
-  estado.tiempo += transcurrido;
+  let trans = Math.floor((Date.now() - estado.inicio) / 1000);
+  estado.tiempo += trans;
 }
+
+// ===============================
+function actualizarUI(actual, total, prog) {
+
+  const cont = document.getElementById("programacion");
+
+  let porcentaje = (actual / total) * 100;
+
+  cont.innerHTML = `
+    <div style="font-size:22px; color:#00ffcc;">
+       ${prog.titulo}
+    </div>
+
+    <div style="color:#aaa;">
+      ${prog.descripcion || ""}
+    </div>
+
+    <div style="margin-top:10px;">
+      ${formato(actual)} / ${formato(total)}
+    </div>
+
+    <div style="width:100%; height:6px; background:#333;">
+      <div style="width:${porcentaje}%; height:100%; background:#00ffcc;"></div>
+    </div>
+
+    <hr>
+
+    <div style="font-size:18px;">Siguiente:</div>
+  `;
+
+  const canal = canales[canalActual];
+
+  for (let i = 1; i <= 5; i++) {
+
+    let next = canal.programas[(estadoCanales[canalActual].indice + i) % canal.programas.length];
+
+    cont.innerHTML += `
+      <div>
+        • ${next.titulo} (${formato(next.duracion || 1800)})
+      </div>
+    `;
+  }
+}
+
+// ===============================
+function mostrarProgramacion() {
+
+  if (canalActual === null) return;
+
+  actualizarUI(0, 1, { titulo: "Cargando...", descripcion: "" });
+}
+
+// ===============================
+function formato(seg) {
+  let m = Math.floor(seg / 60);
+  let s = seg % 60;
+  return `${m}:${s.toString().padStart(2,"0")}`;
+}
+
+// ===============================
+// FULLSCREEN + HORIZONTAL
+// ===============================
+document.getElementById("player").onclick = () => {
+
+  let elem = document.documentElement;
+
+  if (elem.requestFullscreen) {
+    elem.requestFullscreen();
+  }
+
+  if (screen.orientation && screen.orientation.lock) {
+    screen.orientation.lock("landscape").catch(()=>{});
+  }
+};
