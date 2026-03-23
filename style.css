@@ -52,3 +52,7 @@ body {
   width: 250px;
   margin-right: 10px;
 }
+body {
+  user-select: none;
+  -webkit-user-select: none;
+}
