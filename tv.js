@@ -2,6 +2,7 @@ let canalActual = 0;
 let canales = [];
 let indiceVideo = 0;
 let timeoutCambio = null;
+mostrarGuiaGlobal();
 
 // ===============================
 fetch("canales.json")
@@ -25,28 +26,43 @@ function iniciarCanal() {
 }
 
 // ===============================
+const EPOCH = 1700000000;
+
 function reproducir() {
   const canal = canales[canalActual];
-  const video = canal.programas[indiceVideo];
 
-  if (!video) return;
+  const total = canal.programas.reduce((acc, p) => acc + (p.duracion || 1800), 0);
 
-  document.getElementById("player").innerHTML = `
-    <iframe 
-      width="100%" 
-      height="100%" 
-      src="https://www.youtube.com/embed/${video.id}?autoplay=1&mute=0"
-      frameborder="0"
-      allow="autoplay; encrypted-media"
-      allowfullscreen>
-    </iframe>
-  `;
+  const ahora = Math.floor(Date.now() / 1000);
+  const tiempo = (ahora - EPOCH) % total;
 
-  //  cambio automático al siguiente video
-  clearTimeout(timeoutCambio);
-  timeoutCambio = setTimeout(() => {
-    siguienteVideo();
-  }, (video.duracion || 1800) * 1000);
+  let acumulado = 0;
+
+  for (let i = 0; i < canal.programas.length; i++) {
+    let dur = canal.programas[i].duracion || 1800;
+
+    if (tiempo < acumulado + dur) {
+      indiceVideo = i;
+      let offset = tiempo - acumulado;
+
+      const video = canal.programas[i].id;
+
+      document.getElementById("player").innerHTML = `
+        <iframe 
+          width="100%" 
+          height="100%" 
+          src="https://www.youtube.com/embed/${video}?autoplay=1&start=${offset}&mute=0"
+          frameborder="0"
+          allow="autoplay; encrypted-media"
+          allowfullscreen>
+        </iframe>
+      `;
+
+      return;
+    }
+
+    acumulado += dur;
+  }
 }
 
 // ===============================
@@ -98,29 +114,36 @@ function crearCanales() {
 
 // ===============================
 function mostrarProgramacion() {
-  const canal = canales[canalActual];
   const cont = document.getElementById("programacion");
-
   cont.innerHTML = "";
 
-  let ahora = new Date();
+  const ahora = new Date();
+  const canal = canales[canalActual];
 
-  for (let i = 0; i < 5; i++) {
+  let tiempoBase = ahora.getTime();
+
+  for (let i = 0; i < 24; i++) {
+
     let prog = canal.programas[(indiceVideo + i) % canal.programas.length];
+    let dur = (prog.duracion || 1800) * 1000;
 
-    let hora = new Date(ahora.getTime() + i * (prog.duracion || 1800) * 1000);
+    let hora = new Date(tiempoBase);
 
     let div = document.createElement("div");
 
     div.innerHTML = `
-      <b>${hora.getHours().toString().padStart(2,"0")}:${hora.getMinutes().toString().padStart(2,"0")}</b>
-      - ${prog.titulo || "Programa"}
+      <b style="color:#00ffcc">
+        ${hora.getHours().toString().padStart(2,"0")}:${hora.getMinutes().toString().padStart(2,"0")}
+      </b>
+      <div style="font-size:18px">${prog.titulo}</div>
+      <div style="font-size:14px; color:#aaa">${prog.descripcion}</div>
     `;
 
     cont.appendChild(div);
+
+    tiempoBase += dur;
   }
 }
-
 // ===============================
 //  CONTROL REMOTO (TECLADO / TV)
 // ===============================
@@ -138,3 +161,29 @@ document.addEventListener("keydown", (e) => {
     siguienteVideo();
   }
 });
+
+
+function mostrarGuiaGlobal() {
+  const guia = document.getElementById("guia");
+  guia.innerHTML = "";
+
+  canales.forEach((canal, index) => {
+    let div = document.createElement("div");
+    div.className = "guia-canal";
+
+    let contenido = `<b>${index + 1}. ${canal.nombre}</b><br>`;
+
+    for (let i = 0; i < 5; i++) {
+      let prog = canal.programas[i];
+
+      contenido += `
+        <div style="font-size:14px;">
+          • ${prog.titulo}
+        </div>
+      `;
+    }
+
+    div.innerHTML = contenido;
+    guia.appendChild(div);
+  });
+}
