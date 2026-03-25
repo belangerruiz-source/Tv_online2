@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>TV Online</title>
+</head>
+
+<body style="background:black; color:white;">
+
+<h2>📺 TV Online</h2>
+
+<video id="video" controls autoplay width="100%"></video>
+
+<br><br>
+
+<button onclick="cambiarCanal('https://dwstreamlive.akamaized.net/hls/live/2015537/dwstreamlive_es/master.m3u8')">
+DW Español
+</button>
+
+<button onclick="cambiarCanal('https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/5f4d8636c6c2a00007c14c0d/master.m3u8')">
+Nature Time
+</button>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+<script>
+let video = document.getElementById('video');
+let hls;
+
+function cambiarCanal(url) {
+
+  if (hls) {
+    hls.destroy();
+  }
+
+  if (Hls.isSupported()) {
+    hls = new Hls();
+    hls.loadSource(url);
+    hls.attachMedia(video);
+  } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = url;
+  }
+}
+</script>
+
+</body>
+</html>
