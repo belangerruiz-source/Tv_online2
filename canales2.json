@@ -1,0 +1,27 @@
+[
+  {
+    "name": "DW Español",
+    "type": "libre",
+    "url": "https://dwstreamlive.akamaized.net/hls/live/2015537/dwstreamlive_es/master.m3u8"
+  },
+  {
+    "name": "France 24 Español",
+    "type": "libre",
+    "url": "https://static.france24.com/live/F24_ES_HI_HLS/live_web.m3u8"
+  },
+  {
+    "name": "Euronews Español",
+    "type": "libre",
+    "url": "https://rakuten-euronews-5-es.samsung.wurl.tv/playlist.m3u8"
+  },
+  {
+    "name": "RTVE 24h",
+    "type": "libre",
+    "url": "https://rtvelivestream.akamaized.net/rtvesec/24h_main_dvr.m3u8"
+  },
+  {
+    "name": "CGTN Español",
+    "type": "libre",
+    "url": "https://livees.cgtn.com/1000e/prog_index.m3u8"
+  }
+]
