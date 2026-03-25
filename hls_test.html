@@ -2,53 +2,97 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Test TV</title>
+  <title>TV Test</title>
 </head>
 
-<body style="background:black; color:white;">
+<body style="background:black; color:white; font-family:sans-serif;">
 
-<h2>📺 Test Canales</h2>
+<h2>📺 Test de Canales</h2>
 
-<video id="video" controls autoplay width="100%"></video>
+<video id="video" controls autoplay width="100%" style="background:black;"></video>
+
+<p id="estado">Estado: esperando acción...</p>
 
 <div id="canales"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
 <script>
-let video = document.getElementById('video');
+const video = document.getElementById('video');
+const estado = document.getElementById('estado');
 let hls;
 
 function cambiarCanal(url) {
-  if (hls) hls.destroy();
+
+  estado.innerText = "Cargando canal...";
+
+  if (hls) {
+    hls.destroy();
+  }
 
   if (Hls.isSupported()) {
-    hls = new Hls();
+    hls = new Hls({
+      debug: true
+    });
+
     hls.loadSource(url);
     hls.attachMedia(video);
-  } else {
+
+    hls.on(Hls.Events.MANIFEST_PARSED, function() {
+      estado.innerText = "Reproduciendo ✅";
+      video.play();
+    });
+
+    hls.on(Hls.Events.ERROR, function(event, data) {
+      console.error("Error HLS:", data);
+      estado.innerText = "Error al reproducir ❌";
+    });
+
+  } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
     video.src = url;
+    video.addEventListener('loadedmetadata', function() {
+      estado.innerText = "Reproduciendo (modo nativo) ✅";
+      video.play();
+    });
+  } else {
+    estado.innerText = "HLS no soportado ❌";
   }
 }
 
+// Cargar JSON
 fetch("canales2.json")
   .then(res => {
-    console.log("JSON cargado", res);
+    console.log("Respuesta JSON:", res);
     return res.json();
   })
-  .then(data => {
-    console.log("Canales:", data);
+  .then(canales => {
 
-    data.forEach(canal => {
+    console.log("Canales cargados:", canales);
+
+    canales.forEach(canal => {
+
       let btn = document.createElement("button");
       btn.innerText = canal.name;
+      btn.style.display = "block";
+      btn.style.margin = "10px";
+      btn.style.padding = "10px";
+      btn.style.fontSize = "16px";
 
       btn.onclick = () => {
-        console.log("Reproduciendo:", canal.url);
+        console.log("Intentando reproducir:", canal.url);
         cambiarCanal(canal.url);
       };
 
       document.getElementById("canales").appendChild(btn);
     });
+
   })
-  .catch(err => console.error("Error JSON:", err));
+  .catch(err => {
+    console.error("Error cargando JSON:", err);
+    estado.innerText = "Error cargando canales ❌";
+  });
+
+</script>
+
+</body>
+</html>
