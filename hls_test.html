@@ -32,20 +32,23 @@ function cambiarCanal(url) {
 }
 
 fetch("canales2.json")
-  .then(res => res.json())
+  .then(res => {
+    console.log("JSON cargado", res);
+    return res.json();
+  })
   .then(data => {
+    console.log("Canales:", data);
 
     data.forEach(canal => {
       let btn = document.createElement("button");
       btn.innerText = canal.name;
 
-      btn.onclick = () => cambiarCanal(canal.url);
+      btn.onclick = () => {
+        console.log("Reproduciendo:", canal.url);
+        cambiarCanal(canal.url);
+      };
 
       document.getElementById("canales").appendChild(btn);
     });
-
-  });
-</script>
-
-</body>
-</html>
+  })
+  .catch(err => console.error("Error JSON:", err));
