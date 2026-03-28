@@ -1,97 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>My TV</title>
-
-<style>
-body {
-  margin: 0;
-  background: black;
-  color: white;
-  font-family: Arial;
-  display: flex;
-  height: 100vh;
-}
-
-/* 📺 Sidebar canales */
-#canales {
-  width: 30%;
-  max-width: 250px;
-  background: #111;
-  overflow-y: auto;
-}
-
-/* 📺 Canal */
-.canal {
-  padding: 18px;
-  border-bottom: 1px solid #333;
-  font-size: 18px;
-}
-
-.canal:hover {
-  background: #222;
-}
-
-/* 📺 Área principal */
-#main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-/* 📺 Video */
-#player {
-  flex: 3;
-  background: black;
-}
-
-/* 📺 Programación */
-#programacion {
-  flex: 1;
-  background: #000;
-  border-top: 1px solid #333;
-  padding: 10px;
-  overflow-y: auto;
-  <div id="guia"></div>
-}
-
-/* 📺 Botón fullscreen */
-#fullscreenBtn {
-  position: absolute;
-  right: 10px;
-  top: 10px;
-  z-index: 10;
-  background: rgba(0,0,0,0.7);
-  color: white;
-  border: none;
-  padding: 10px;
-}
-</style>
+<title>TV Online PRO</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
 
 <body>
-<button id="fullscreenBtn">⛶</button>
-<button id="restartBtn">↺</button>
 
-<div id="canales"></div>
+<div id="sidebar"></div>
 
-<div id="main">
-
-  <button id="fullscreenBtn">⛶</button>
-
-  <div id="player"></div>
-
-  <div id="programacion">Programación...</div>
-
+<div id="player-container">
+  <video id="video" controls autoplay></video>
+  <div id="info">Selecciona un canal</div>
 </div>
 
-<script src="tv.js"></script>
-<div id="controls">
-  <button id="restartBtn" class="control-btn">↺</button>
-  <button id="fullscreenBtn" class="control-btn">⛶</button>
-</div>
+<script src="app.js"></script>
 
-<button id="toggleEPG">Programación</button>
 </body>
 </html>
